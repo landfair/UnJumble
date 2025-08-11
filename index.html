@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnJumble</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 16px;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 50%, #6d28d9 100%);
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            z-index: 2;
+            position: relative;
+            justify-content: center;
+        }
+        
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .nyu-logo {
+            width: 320px;
+            height: 320px;
+            object-fit: contain;
+            /* Removed the filter so logo shows in original colors */
+        }
+        
+        .nyu-logo-small {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            animation: headerShimmer 8s ease-in-out infinite;
+        }
+        
+        @keyframes headerShimmer {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        .logo {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.03em;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0;
+            background: #f8fafc;
+            border-radius: 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid #e2e8f0;
+        }
+        
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-item:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 4px;
+            font-variant-numeric: tabular-nums;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .game-area {
+            padding: 40px;
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .instructions h3 {
+            color: #475569;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .instructions p {
+            color: #64748b;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .puzzle-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            min-height: 400px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        .puzzle-title {
+            text-align: center;
+            margin-bottom: 16px;
+            color: #1e293b;
+            font-size: 1.125rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .puzzle-attribution {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-style: italic;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.4;
+            padding: 0 16px;
+        }
+        
+        .sentence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .sentence-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .sentence-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border-color: #667eea;
+        }
+        
+        .sentence-card.recently-moved {
+            animation: celebration 1.2s ease-out;
+            border-color: #10b981;
+        }
+        
+        @keyframes celebration {
+            0% {
+                transform: scale(1.05) translateY(-4px);
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            }
+            50% {
+                transform: scale(1.03) translateY(-2px);
+                box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            }
+        }
+        
+        .sentence-card.error {
+            border-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2 0%, white 100%);
+            animation: shake 0.6s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+        
+        .sentence-card.correct {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, white 100%);
+        }
+        
+        .sentence-text {
+            flex: 1;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .sentence-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .control-button {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white !important;
+            border: none !important;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer !important;
+            display: inline-block !important;
+            text-align: center;
+            line-height: 36px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .control-button:hover:not(:disabled) {
+            transform: translateY(-1px) scale(1.05) !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+            cursor: pointer !important;
+        }
+        
+        .control-button:active:not(:disabled) {
+            transform: translateY(0) scale(0.95) !important;
+        }
+        
+        .control-button:disabled {
+            background: #cbd5e1 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .up-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+        
+        .up-btn:hover:not(:disabled) {
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3), 0 2px 4px -1px rgba(16, 185, 129, 0.06) !important;
+        }
+        
+        .down-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+        }
+        
+        .down-btn:hover:not(:disabled) {
+            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3), 0 2px 4px -1px rgba(245, 158, 11, 0.06) !important;
+        }
+        
+        .position-indicator {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 600;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 12px;
+            min-width: 28px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            display: none; /* Hidden since we removed position indicators */
+        }
+        
+        .submit-area {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .submit-button {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white !important;
+            border: none !important;
+            border-radius: 8px;
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-transform: none;
+            letter-spacing: 0;
+            min-width: 160px;
+            font-family: 'Inter', sans-serif;
+            display: inline-block !important;
+            text-decoration: none !important;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            background: linear-gradient(135deg, #5855eb 0%, #7c3aed 100%) !important;
+            cursor: pointer !important;
+        }
+        
+        .submit-button:active {
+            transform: translateY(0) !important;
+        }
+        
+        .submit-button:disabled {
+            background: #cbd5e1 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .feedback {
+            margin: 24px 0;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feedback::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+        
+        .feedback.show::before {
+            left: 100%;
+        }
+        
+        .feedback.error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #fca5a5;
+            color: #991b1b;
+            display: block;
+        }
+        
+        .feedback.success {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid #86efac;
+            color: #065f46;
+            display: block;
+        }
+        
+        .feedback.game-over {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #fcd34d;
+            color: #92400e;
+            display: block;
+            text-align: left;
+            line-height: 1.8;
+        }
+        
+        .cheat-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 2999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cheat-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .cheat-menu {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+            max-width: 400px;
+            width: 90%;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .cheat-menu.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .cheat-menu h3 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .puzzle-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .puzzle-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .puzzle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+        
+        .cheat-close {
+            width: 100%;
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .cheat-close:hover {
+            background: #e5e7eb;
+        }
+        
+        .victory-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 4000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .victory-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+        
+        .victory-content {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+            animation: victoryEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes victoryEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(100px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .victory-emoji {
+            font-size: 4rem;
+            margin-bottom: 24px;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .victory-title {
+            font-size: 2.5rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+        
+        .victory-stats {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .victory-time,
+        .victory-attempts {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .victory-time {
+            color: #059669;
+        }
+        
+        .victory-attempts {
+            color: #7c3aed;
+        }
+        
+        .share-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 24px 0;
+        }
+        
+        .share-btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .twitter-btn { background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%); }
+        .text-btn { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); }
+        .email-btn { background: linear-gradient(135deg, #ea4335 0%, #d33b2c 100%); }
+        .copy-btn { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); }
+        
+        .close-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+        
+        .completed-message {
+            text-align: center;
+            padding: 48px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            border: 2px solid #86efac;
+            margin: 24px 0;
+        }
+        
+        .completed-message h3 {
+            color: #065f46;
+            font-size: 1.75rem;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        
+        .next-puzzle-timer {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 1.5rem;
+            color: #7c3aed;
+            font-weight: 700;
+            margin-top: 16px;
+        }
+        
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .welcome-overlay.active {
+            opacity: 1;
+        }
+        
+        .welcome-modal {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .welcome-overlay.active .welcome-modal {
+            transform: scale(1);
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+        
+        .welcome-subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.125rem;
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
+        
+        .welcome-instructions {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .welcome-instructions h3 {
+            color: #374151;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instruction-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .instruction-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .instruction-icon {
+            font-size: 1.25rem;
+            margin-top: 2px;
+        }
+        
+        .welcome-tips {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #fbbf24;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 32px;
+            text-align: center;
+            color: #78350f;
+            font-weight: 500;
+        }
+        
+        .welcome-ready-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 32px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-ready-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .welcome-ready-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .welcome-ready-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+        
+        .welcome-ready-btn:active {
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .game-card {
+                border-radius: 20px;
+            }
+            
+            .header {
+                padding: 24px 20px;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .game-area {
+                padding: 24px 20px;
+            }
+            
+            .puzzle-container {
+                padding: 20px;
+            }
+            
+            .sentence-card {
+                padding: 16px 20px;
+                gap: 12px;
+            }
+            
+            .sentence-text {
+                font-size: 0.9rem;
+            }
+            
+            .submit-button {
+                padding: 14px 32px;
+                font-size: 1rem;
+            }
+            
+            .victory-content {
+                padding: 32px 24px;
+            }
+            
+            .share-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .welcome-modal {
+                padding: 32px 24px;
+            }
+            
+            .welcome-title {
+                font-size: 1.75rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+            
+            .welcome-instructions {
+                padding: 20px;
+            }
+            
+            .welcome-ready-btn {
+                font-size: 1.125rem;
+                padding: 16px 24px;
+            }
+            
+            .control-button {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            
+            .sentence-controls {
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="game-card">
+            <div class="header">
+                <div class="header-content">
+                    <img src="https://i.imgur.com/iIODsNl.png" alt="NYU Logo" class="nyu-logo">
+                    <div class="header-text">
+                        <div class="logo">UnJumble</div>
+                        <div class="subtitle">Return sentences to their original order</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-label">Puzzle</div>
+                    <div class="stat-value" id="puzzleNumber">#1</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Attempts</div>
+                    <div class="stat-value" id="attemptsRemaining">3/3</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Timer</div>
+                    <div class="stat-value" id="timer">00:00</div>
+                </div>
+            </div>
+            
+            <div class="game-area" id="gameArea">
+
+                <div class="puzzle-container" id="puzzleContainer">
+                    <div class="puzzle-title" id="puzzleTitle">Arrange the Sentences</div>
+                    <div class="sentence-list" id="sentenceList">
+                        <!-- Sentence cards will be generated here -->
+                    </div>
+                </div>
+                
+                <div class="submit-area">
+                    <input type="button" class="submit-button" id="submitButton" value="Submit Answer">
+                </div>
+                
+                <div class="feedback" id="feedback">
+                    <!-- Feedback messages will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Welcome Modal -->
+    <div class="welcome-overlay active" id="welcomeOverlay">
+        <div class="welcome-modal">
+            <h1 class="welcome-title">Daily UnJumble</h1>
+            <p class="welcome-subtitle">Return sentences to their original order</p>
+            
+            <div class="welcome-instructions">
+                <h3>🎯 How to Play</h3>
+                <ul class="instruction-list">
+                    <li class="instruction-item">
+                        <span class="instruction-icon">⬆️</span>
+                        <span>Single click green arrows to move sentences up one position</span>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">⬇️</span>
+                        <span>Single click orange arrows to move sentences down one position</span>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">⚡</span>
+                        <span>Double click arrows to jump to the top or bottom instantly</span>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">✅</span>
+                        <span>Click "Submit Answer" to check your solution</span>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">❌</span>
+                        <span>You have 3 attempts to solve today's puzzle</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="welcome-tips">
+                💡 Tip: Look for logical flow and connecting words between sentences!
+            </div>
+            
+            <button class="welcome-ready-btn" onclick="startGame()">
+                I'm Ready to Play!
+            </button>
+        </div>
+    </div>
+    
+    <!-- Cheat Menu -->
+    <div class="cheat-overlay" id="cheatOverlay" onclick="closeCheatMenu()"></div>
+    <div class="cheat-menu" id="cheatMenu">
+        <h3>🎮 Puzzle Selector</h3>
+        <div class="puzzle-selector" id="puzzleSelector">
+            <!-- Puzzle buttons will be generated here -->
+        </div>
+                    <button class="cheat-close" id="cheatCloseBtn">Close</button>
+    </div>
+    
+            <!-- Game Over Modal -->
+        <div class="victory-modal" id="gameOverModal">
+            <div class="victory-content">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 16px;">
+                    <img src="https://i.imgur.com/iIODsNl.png" alt="NYU Logo" class="nyu-logo-small">
+                    <div class="victory-emoji">😔</div>
+                </div>
+                <h2 class="victory-title">Game Over</h2>
+                <p>You've used all 3 attempts on today's puzzle.</p>
+                
+                <div class="victory-stats">
+                    <div class="victory-time" id="gameOverTime">3:45</div>
+                    <div class="victory-attempts" style="color: #ef4444;">3 attempts used</div>
+                    <p style="margin-top: 12px; color: #6b7280;">Don't worry - come back tomorrow for a new puzzle!</p>
+                </div>
+                
+                <div class="share-buttons">
+                    <button class="share-btn twitter-btn" id="gameOverShareTwitterBtn">
+                        🐦 Tweet
+                    </button>
+                    <button class="share-btn text-btn" id="gameOverShareSMSBtn">
+                        📱 Text
+                    </button>
+                    <button class="share-btn email-btn" id="gameOverShareEmailBtn">
+                        ✉️ Email
+                    </button>
+                    <button class="share-btn copy-btn" id="gameOverShareCopyBtn">
+                        📋 Copy
+                    </button>
+                </div>
+                
+                <button class="close-btn" id="gameOverCloseBtn">Continue</button>
+            </div>
+        </div>
+        
+        <!-- Victory Modal -->
+    <div class="victory-modal" id="victoryModal">
+        <div class="victory-content">
+            <div class="victory-emoji">🎉</div>
+            <h2 class="victory-title">Amazing!</h2>
+            <p>You solved today's puzzle!</p>
+            
+            <div class="victory-stats">
+                <div class="victory-time" id="finalTime">2:34</div>
+                <div class="victory-attempts" id="finalAttempts">Solved in 2 attempts</div>
+                <p style="margin-top: 12px; color: #6b7280;">Share your results with friends!</p>
+            </div>
+            
+            <div class="share-buttons">
+                <button class="share-btn twitter-btn" onclick="shareToTwitter()">
+                    🐦 Tweet
+                </button>
+                <button class="share-btn text-btn" onclick="shareViaSMS()">
+                    📱 Text
+                </button>
+                <button class="share-btn email-btn" onclick="shareViaEmail()">
+                    ✉️ Email
+                </button>
+                <button class="share-btn copy-btn" onclick="copyToClipboard()">
+                    📋 Copy
+                </button>
+            </div>
+            
+            <button class="close-btn" onclick="closeVictoryModal()">Continue</button>
+        </div>
+    </div>
+    
+    <script>
+        // Puzzle database
+        const puzzles = [
+            {
+                title: "Future Shock",
+                attribution: "From Alvin Toffler's 'Future Shock' (1970)",
+                sentences: [
+                    "If the last 50,000 years of man's existence were divided into lifetimes of approximately sixty-two years each, there have been about 800 such lifetimes.",
+                    "Of these 800, fully 650 were spent in caves.",
+                    "Only during the last seventy lifetimes has it been possible to communicate effectively from one lifetime to another—as writing made it possible to do.",
+                    "Only during the last six lifetimes did masses of men ever see a printed word.",
+                    "Only during the last four has it been possible to measure time with any precision.",
+                    "Only in the last two has anyone anywhere used an electric motor.",
+                    "And the overwhelming majority of all the material goods we use in daily life today have been developed within the present, the 800th, lifetime.",
+                    "This 800th lifetime marks a sharp break with all past human experience because during this lifetime man's relationship to resources has reversed itself."
+                ]
+            },
+            {
+                title: "Transfer of Learning",
+                attribution: "From David Perkins' 'Transfer of Learning' in International Encyclopedia of Education",
+                sentences: [
+                    "Once upon a time, an astute and beneficent leader in a remote country anticipated increasing aggression from a territory hungry neighbor.",
+                    "Recognizing that the neighbor had more military might, the leader concluded that his people would have to outthink, rather than outpower, the enemy.",
+                    "Undistinguished in its military armament and leadership, the country did have one remarkable resource: the reigning world chess master, undefeated for over twenty years.",
+                    "\"Aha,\" the leader said to himself, \"we will recruit this intellect, honed so long on the whetstone of chess, teach him some politics and military theory, and then outmaneuver the enemy with the help of his genius.\"",
+                    "A fanciful tale, to be sure, but consider the leaders plan for a moment: Is it disastrously naive, possibly helpful, or a good bet?",
+                    "In fact, the tale has no definite conclusion.",
+                    "Rather, it is the beginning of another tale, a tale about psychology and the human intellect that research is gradually spinning.",
+                    "Questions like that of the chess master's neuropolitical and military potential stand in the center of one of the most puzzling and important issues that cognitive psychology has addressed: the roles of general and of context-specific knowledge in thinking."
+                ]
+            },
+            {
+                title: "Attention and Technology",
+                attribution: "From D. Graham Burnett, Alyssa Loh and Peter Schmidt's 'Powerful Forces Are Fracking Our Attention'",
+                sentences: [
+                    "The lament is as old as education itself: The students aren't paying attention.",
+                    "But today, the problem of flighty or fragmented attention has reached truly catastrophic proportions.",
+                    "High school and college teachers overwhelmingly report that students' capacity for sustained, or deep attention has sharply decreased significantly impeding the forms of study — reading, looking at art, round-table discussions — once deemed central to the liberal arts.",
+                    "By some measures you are lucky these days to get 47 seconds of focused attention on a discrete task.",
+                    "\"Middlemarch\" is tough sledding on that timeline.",
+                    "So are most forms of human interaction out of which meaningful life, collective action and political engagement are made.",
+                    "We are witnessing the dark side of our new technological lives, whose extractive profit models amount to the systematic fracking of human beings: pumping vast quantities of high-pressure media content into our faces to force up a spume of the vaporous and intimate stuff called attention, which now trades on the open market.",
+                    "Increasingly powerful systems seek to ensure that our attention is never truly ours."
+                ]
+            }
+        ];
+        
+        // Game state
+        let currentPuzzle = null;
+        let currentOrder = [];
+        let correctOrder = [];
+        let attemptCount = 0;
+        let maxAttempts = 3;
+        let startTime = null;
+        let timerInterval = null;
+        let isGameComplete = false;
+        let cheatModeActive = false;
+        let currentPuzzleIndex = 0;
+        let gameStarted = false;
+        
+        // Cheat code detection
+        let cheatInput = '';
+        const cheatCode = 'rowboat';
+        
+        // Click timing for double-click detection
+        let clickTimers = {};
+        
+        // Particle system
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Listen for cheat code
+        document.addEventListener('keydown', function(e) {
+            if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+                cheatInput += e.key.toLowerCase();
+                
+                if (cheatInput.length > cheatCode.length) {
+                    cheatInput = cheatInput.slice(-cheatCode.length);
+                }
+                
+                if (cheatInput === cheatCode) {
+                    if (!cheatModeActive) {
+                        activateCheatMode();
+                    } else {
+                        showCheatMenu();
+                    }
+                    cheatInput = '';
+                }
+            }
+        });
+        
+        // Get today's puzzle index based on date
+        function getTodaysPuzzleIndex() {
+            const startDate = new Date('2025-01-01');
+            const today = new Date();
+            const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            return Math.abs(daysDiff) % puzzles.length;
+        }
+        
+        // Initialize game
+        function initGame(puzzleIndex = null) {
+            currentPuzzleIndex = puzzleIndex !== null ? puzzleIndex : getTodaysPuzzleIndex();
+            currentPuzzle = puzzles[currentPuzzleIndex];
+            
+            document.getElementById('puzzleNumber').textContent = `#${currentPuzzleIndex + 1}`;
+            document.getElementById('puzzleTitle').textContent = currentPuzzle.title;
+            
+            // Add attribution if it exists
+            const existingAttribution = document.getElementById('puzzleAttribution');
+            if (existingAttribution) {
+                existingAttribution.remove();
+            }
+            
+            if (currentPuzzle.attribution) {
+                const attributionElement = document.createElement('div');
+                attributionElement.id = 'puzzleAttribution';
+                attributionElement.className = 'puzzle-attribution';
+                attributionElement.textContent = currentPuzzle.attribution;
+                
+                const puzzleTitle = document.getElementById('puzzleTitle');
+                puzzleTitle.parentNode.insertBefore(attributionElement, puzzleTitle.nextSibling);
+            }
+            
+            if (!cheatModeActive && puzzleIndex === null) {
+                const completedToday = checkIfCompletedToday();
+                if (completedToday) {
+                    document.getElementById('welcomeOverlay').classList.remove('active');
+                    showCompletedMessage();
+                    return;
+                }
+            }
+            
+            // Reset game state
+            attemptCount = 0;
+            isGameComplete = false;
+            gameStarted = false;
+            clickTimers = {};
+            
+            // Set up correct order
+            correctOrder = currentPuzzle.sentences.map((_, index) => index);
+            
+            // Shuffle sentences for initial display
+            currentOrder = [...correctOrder].sort(() => Math.random() - 0.5);
+            
+            // Reset UI
+            document.getElementById('submitButton').disabled = false;
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('feedback').style.display = 'none';
+            
+            // Create sentence cards
+            createSentenceCards();
+            
+            // Reset timer display
+            document.getElementById('timer').textContent = '00:00';
+            
+            // Update attempts display
+            updateAttemptsDisplay();
+            
+            // Show welcome modal for new games
+            if (!cheatModeActive || puzzleIndex !== null) {
+                document.getElementById('welcomeOverlay').classList.add('active');
+            }
+        }
+        
+        // Start the game when player is ready
+        function startGame() {
+            const welcomeOverlay = document.getElementById('welcomeOverlay');
+            welcomeOverlay.classList.remove('active');
+            
+            setTimeout(() => {
+                welcomeOverlay.style.display = 'none';
+                if (!gameStarted && !isGameComplete) {
+                    gameStarted = true;
+                    startTimer();
+                }
+            }, 400);
+        }
+        
+        function checkIfCompletedToday() {
+            const today = new Date().toDateString();
+            const lastCompleted = localStorage.getItem('unjumbleLastCompleted');
+            return lastCompleted === today;
+        }
+        
+        function markCompletedToday() {
+            if (!cheatModeActive) {
+                const today = new Date().toDateString();
+                localStorage.setItem('unjumbleLastCompleted', today);
+            }
+        }
+        
+        function showCompletedMessage() {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = `
+                <div class="completed-message">
+                    <h3>🎉 You've completed today's puzzle!</h3>
+                    <p>Come back tomorrow for a new challenge.</p>
+                    <div class="next-puzzle-timer">
+                        Next puzzle in: <span id="countdown"></span>
+                    </div>
+                </div>
+            `;
+            startCountdown();
+        }
+        
+        function startCountdown() {
+            function updateCountdown() {
+                const now = new Date();
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+                
+                const timeUntilTomorrow = tomorrow - now;
+                const hours = Math.floor(timeUntilTomorrow / (1000 * 60 * 60));
+                const minutes = Math.floor((timeUntilTomorrow % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeUntilTomorrow % (1000 * 60)) / 1000);
+                
+                const countdownElement = document.getElementById('countdown');
+                if (countdownElement) {
+                    countdownElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+        
+        function activateCheatMode() {
+            cheatModeActive = true;
+            showCheatMenu();
+            
+            const puzzleNumber = document.getElementById('puzzleNumber');
+            puzzleNumber.style.color = '#10b981';
+            puzzleNumber.style.fontWeight = 'bold';
+            puzzleNumber.title = 'Cheat Mode Active';
+            
+            if (checkIfCompletedToday()) {
+                showCheatMenu();
+            }
+        }
+        
+        function showCheatMenu() {
+            const puzzleSelector = document.getElementById('puzzleSelector');
+            puzzleSelector.innerHTML = '';
+            
+            puzzles.forEach((puzzle, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'puzzle-btn';
+                btn.textContent = `#${index + 1}`;
+                btn.title = puzzle.title;
+                btn.onclick = () => {
+                    closeCheatMenu();
+                    document.getElementById('welcomeOverlay').style.display = 'none';
+                    const gameArea = document.getElementById('gameArea');
+                    if (!gameArea.querySelector('#puzzleContainer')) {
+                        gameArea.innerHTML = `
+                            <div class="puzzle-container" id="puzzleContainer">
+                                <div class="puzzle-title" id="puzzleTitle">Arrange the Sentences</div>
+                                <div class="sentence-list" id="sentenceList">
+                                    <!-- Sentence cards will be generated here -->
+                                </div>
+                            </div>
+                            
+                            <div class="submit-area">
+                                <button class="submit-button" id="submitButton" onclick="submitGuess()">
+                                    Submit Answer
+                                </button>
+                            </div>
+                            
+                            <div class="feedback" id="feedback">
+                                <!-- Feedback messages will appear here -->
+                            </div>
+                        `;
+                    }
+                    initGame(index);
+                    if (!gameStarted && !isGameComplete) {
+                        gameStarted = true;
+                        startTimer();
+                    }
+                };
+                puzzleSelector.appendChild(btn);
+            });
+            
+            document.getElementById('cheatOverlay').classList.add('active');
+            document.getElementById('cheatMenu').classList.add('active');
+        }
+        
+        function closeCheatMenu() {
+            document.getElementById('cheatOverlay').classList.remove('active');
+            document.getElementById('cheatMenu').classList.remove('active');
+        }
+        
+        function createSentenceCards() {
+            const sentenceList = document.getElementById('sentenceList');
+            sentenceList.innerHTML = '';
+            
+            currentOrder.forEach((sentenceIndex, position) => {
+                const card = document.createElement('div');
+                card.className = 'sentence-card';
+                card.dataset.originalIndex = sentenceIndex;
+                card.dataset.currentPosition = position;
+                
+                const isFirst = position === 0;
+                const isLast = position === currentOrder.length - 1;
+                
+                card.innerHTML = `
+                    <div class="sentence-text">${currentPuzzle.sentences[sentenceIndex]}</div>
+                    <div class="sentence-controls">
+                        <input type="button" class="control-button up-btn" ${isFirst ? 'disabled' : ''} 
+                                data-position="${position}" data-direction="up" value="↑">
+                        <input type="button" class="control-button down-btn" ${isLast ? 'disabled' : ''} 
+                                data-position="${position}" data-direction="down" value="↓">
+                    </div>
+                `;
+                
+                // Add event listeners instead of inline handlers
+                const upBtn = card.querySelector('.up-btn');
+                const downBtn = card.querySelector('.down-btn');
+                
+                if (upBtn && !isFirst) {
+                    upBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        handleMove(position, 'up');
+                    });
+                    upBtn.addEventListener('dblclick', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        performJumpMove(position, 'up');
+                    });
+                }
+                
+                if (downBtn && !isLast) {
+                    downBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        handleMove(position, 'down');
+                    });
+                    downBtn.addEventListener('dblclick', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        performJumpMove(position, 'down');
+                    });
+                }
+                
+                sentenceList.appendChild(card);
+            });
+        }
+        
+        function handleMove(position, direction) {
+            if (isGameComplete) return;
+            
+            // Start timer if it hasn't been started yet
+            if (!gameStarted) {
+                gameStarted = true;
+                startTimer();
+            }
+            
+            // Perform single move for click events
+            performSingleMove(position, direction);
+        }
+        
+        function performSingleMove(position, direction) {
+            let newPosition;
+            
+            if (direction === 'up') {
+                newPosition = Math.max(0, position - 1);
+            } else if (direction === 'down') {
+                newPosition = Math.min(currentOrder.length - 1, position + 1);
+            }
+            
+            if (newPosition !== position) {
+                // Swap items
+                const temp = currentOrder[position];
+                currentOrder[position] = currentOrder[newPosition];
+                currentOrder[newPosition] = temp;
+                
+                animateAndRecreate(newPosition);
+            }
+        }
+        
+        function performJumpMove(position, direction) {
+            let newPosition;
+            
+            if (direction === 'up' || direction === 'top') {
+                newPosition = 0;
+            } else if (direction === 'down' || direction === 'bottom') {
+                newPosition = currentOrder.length - 1;
+            }
+            
+            if (newPosition !== position) {
+                // Remove item from current position
+                const movedItem = currentOrder.splice(position, 1)[0];
+                
+                // Insert at new position
+                currentOrder.splice(newPosition, 0, movedItem);
+                
+                animateAndRecreate(newPosition);
+            }
+        }
+        
+        function animateAndRecreate(movedToPosition) {
+            // Recreate cards
+            createSentenceCards();
+            
+            // Animate the moved card
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.sentence-card');
+                if (cards[movedToPosition]) {
+                    cards[movedToPosition].classList.add('recently-moved');
+                    cards[movedToPosition].scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                    
+                    setTimeout(() => {
+                        if (cards[movedToPosition]) {
+                            cards[movedToPosition].classList.remove('recently-moved');
+                        }
+                    }, 1200);
+                }
+            }, 50);
+        }
+        
+        function updateAttemptsDisplay() {
+            const remaining = maxAttempts - attemptCount;
+            document.getElementById('attemptsRemaining').textContent = `${remaining}/${maxAttempts}`;
+        }
+        
+        function submitGuess() {
+            if (isGameComplete) return;
+            
+            if (!gameStarted) {
+                gameStarted = true;
+                startTimer();
+            }
+            
+            attemptCount++;
+            updateAttemptsDisplay();
+            
+            const isCorrect = arraysEqual(currentOrder, correctOrder);
+            
+            if (isCorrect) {
+                handleVictory();
+                return;
+            }
+            
+            const firstErrorPosition = findFirstError();
+            showFeedback(firstErrorPosition);
+            
+            if (attemptCount >= maxAttempts) {
+                handleGameOver();
+            }
+        }
+        
+        function findFirstError() {
+            for (let i = 0; i < currentOrder.length; i++) {
+                if (currentOrder[i] !== correctOrder[i]) {
+                    return i + 1;
+                }
+            }
+            return -1;
+        }
+        
+        function showFeedback(errorPosition) {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback error show';
+            feedback.innerHTML = `❌ First error is at position ${errorPosition}. ${maxAttempts - attemptCount} attempts remaining.`;
+            
+            highlightErrorPosition(errorPosition);
+        }
+        
+        function highlightErrorPosition(position) {
+            const cards = document.querySelectorAll('.sentence-card');
+            cards.forEach((card, index) => {
+                card.classList.remove('error', 'correct');
+                if (index + 1 === position) {
+                    card.classList.add('error');
+                } else if (index + 1 < position) {
+                    card.classList.add('correct');
+                }
+            });
+        }
+        
+        function handleGameOver() {
+            isGameComplete = true;
+            stopTimer();
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback game-over show';
+            
+            const correctOrderText = correctOrder.map((i, pos) => 
+                `<strong>${pos + 1}.</strong> ${currentPuzzle.sentences[i]}`
+            ).join('<br><br>');
+            
+            feedback.innerHTML = `
+                <strong>Game Over!</strong><br><br>
+                <strong>The correct order was:</strong><br><br>
+                ${correctOrderText}
+            `;
+            
+            document.getElementById('submitButton').disabled = true;
+            
+            currentOrder = [...correctOrder];
+            createSentenceCards();
+            
+            if (!cheatModeActive) {
+                markCompletedToday();
+            }
+            
+            // Show game over modal after a delay
+            setTimeout(() => {
+                showGameOverModal();
+            }, 2000);
+        }
+        
+        function showGameOverModal() {
+            const gameOverTime = document.getElementById('timer').textContent;
+            
+            document.getElementById('gameOverTime').textContent = gameOverTime;
+            document.getElementById('gameOverModal').classList.add('active');
+        }
+        
+        function getGameOverShareText() {
+            const time = document.getElementById('gameOverTime').textContent;
+            const maxAttempts = 3;
+            
+            // Show all red squares for game over
+            const attemptSquares = Array(maxAttempts).fill('🟥').join('');
+            
+            return `UnJumble #${currentPuzzleIndex + 1}\n${attemptSquares}\nTime: ${time}\n\nI didn't solve today's puzzle, but you can try! Play at: https://sites.google.com/view/unjumblegame/home?authuser=1`;
+        }
+        
+        function shareGameOverToTwitter() {
+            const text = encodeURIComponent(getGameOverShareText());
+            const url = `https://twitter.com/intent/tweet?text=${text}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareGameOverViaSMS() {
+            const text = encodeURIComponent(getGameOverShareText());
+            const url = `sms:?body=${text}`;
+            window.open(url);
+        }
+        
+        function shareGameOverViaEmail() {
+            const subject = encodeURIComponent('Try this UnJumble puzzle!');
+            const body = encodeURIComponent(getGameOverShareText());
+            const url = `mailto:?subject=${subject}&body=${body}`;
+            window.open(url);
+        }
+        
+        function copyGameOverToClipboard() {
+            const text = getGameOverShareText();
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.top = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+        
+        function closeGameOverModal() {
+            document.getElementById('gameOverModal').classList.remove('active');
+            
+            if (!cheatModeActive) {
+                showCompletedMessage();
+            }
+        }
+        
+        function handleVictory() {
+            isGameComplete = true;
+            stopTimer();
+            
+            if (!cheatModeActive) {
+                markCompletedToday();
+            }
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback success show';
+            feedback.innerHTML = `🎉 Congratulations! You solved it in ${attemptCount} attempt${attemptCount === 1 ? '' : 's'}!`;
+            
+            const cards = document.querySelectorAll('.sentence-card');
+            cards.forEach(card => {
+                card.classList.remove('error');
+                card.classList.add('correct');
+            });
+            
+            document.getElementById('submitButton').disabled = true;
+            
+            setTimeout(() => {
+                showVictoryModal();
+            }, 1500);
+        }
+        
+        function showVictoryModal() {
+            const finalTime = document.getElementById('timer').textContent;
+            const attemptsUsed = attemptCount;
+            
+            document.getElementById('finalTime').textContent = finalTime;
+            document.getElementById('finalAttempts').textContent = `Solved in ${attemptsUsed} attempt${attemptsUsed === 1 ? '' : 's'}`;
+            document.getElementById('victoryModal').classList.add('active');
+            
+            saveGameStats(finalTime, attemptsUsed);
+        }
+        
+        function saveGameStats(time, attempts) {
+            const stats = JSON.parse(localStorage.getItem('unjumbleStats') || '{}');
+            const today = new Date().toDateString();
+            stats[today] = {
+                time: time,
+                attempts: attempts,
+                puzzleIndex: currentPuzzleIndex
+            };
+            localStorage.setItem('unjumbleStats', JSON.stringify(stats));
+        }
+        
+        function arraysEqual(a, b) {
+            return a.length === b.length && a.every((val, index) => val === b[index]);
+        }
+        
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+        
+        function updateTimer() {
+            if (!startTime || isGameComplete) return;
+            
+            const elapsed = Date.now() - startTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function getShareText() {
+            const time = document.getElementById('finalTime').textContent;
+            const attempts = attemptCount;
+            const maxAttempts = 3;
+            
+            const attemptSquares = Array(maxAttempts).fill('⬜').map((square, index) => {
+                if (index < attempts - 1) return '🟥';
+                if (index === attempts - 1) return '🟩';
+                return '⬜';
+            }).join('');
+            
+            return `UnJumble #${currentPuzzleIndex + 1}\n${attemptSquares}\nTime: ${time}\n\nCan you solve today's puzzle? Play at: https://sites.google.com/view/unjumblegame/home?authuser=1`;
+        }
+        
+        function shareToTwitter() {
+            const text = encodeURIComponent(getShareText());
+            const url = `https://twitter.com/intent/tweet?text=${text}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareViaSMS() {
+            const text = encodeURIComponent(getShareText());
+            const url = `sms:?body=${text}`;
+            window.open(url);
+        }
+        
+        function shareViaEmail() {
+            const subject = encodeURIComponent('Check out my UnJumble results!');
+            const body = encodeURIComponent(getShareText());
+            const url = `mailto:?subject=${subject}&body=${body}`;
+            window.open(url);
+        }
+        
+        function copyToClipboard() {
+            const text = getShareText();
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.top = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+        
+        function closeVictoryModal() {
+            document.getElementById('victoryModal').classList.remove('active');
+            
+            if (!cheatModeActive) {
+                showCompletedMessage();
+            }
+        }
+        
+        // Add all event listeners after DOM is loaded
+        function addEventListeners() {
+            // Submit button
+            const submitButton = document.getElementById('submitButton');
+            if (submitButton) {
+                submitButton.addEventListener('click', submitGuess);
+            }
+            
+            // Welcome ready button
+            const welcomeReadyBtn = document.getElementById('welcomeReadyBtn');
+            if (welcomeReadyBtn) {
+                welcomeReadyBtn.addEventListener('click', startGame);
+            }
+            
+            // Cheat overlay and close button
+            const cheatOverlay = document.getElementById('cheatOverlay');
+            if (cheatOverlay) {
+                cheatOverlay.addEventListener('click', closeCheatMenu);
+            }
+            
+            const cheatCloseBtn = document.getElementById('cheatCloseBtn');
+            if (cheatCloseBtn) {
+                cheatCloseBtn.addEventListener('click', closeCheatMenu);
+            }
+            
+            // Victory modal share buttons
+            const shareTwitterBtn = document.getElementById('shareTwitterBtn');
+            if (shareTwitterBtn) {
+                shareTwitterBtn.addEventListener('click', shareToTwitter);
+            }
+            
+            const shareSMSBtn = document.getElementById('shareSMSBtn');
+            if (shareSMSBtn) {
+                shareSMSBtn.addEventListener('click', shareViaSMS);
+            }
+            
+            const shareEmailBtn = document.getElementById('shareEmailBtn');
+            if (shareEmailBtn) {
+                shareEmailBtn.addEventListener('click', shareViaEmail);
+            }
+            
+            const shareCopyBtn = document.getElementById('shareCopyBtn');
+            if (shareCopyBtn) {
+                shareCopyBtn.addEventListener('click', copyToClipboard);
+            }
+            
+            const victoryCloseBtn = document.getElementById('victoryCloseBtn');
+            if (victoryCloseBtn) {
+                victoryCloseBtn.addEventListener('click', closeVictoryModal);
+            }
+            
+            // Game Over modal share buttons
+            const gameOverShareTwitterBtn = document.getElementById('gameOverShareTwitterBtn');
+            if (gameOverShareTwitterBtn) {
+                gameOverShareTwitterBtn.addEventListener('click', shareGameOverToTwitter);
+            }
+            
+            const gameOverShareSMSBtn = document.getElementById('gameOverShareSMSBtn');
+            if (gameOverShareSMSBtn) {
+                gameOverShareSMSBtn.addEventListener('click', shareGameOverViaSMS);
+            }
+            
+            const gameOverShareEmailBtn = document.getElementById('gameOverShareEmailBtn');
+            if (gameOverShareEmailBtn) {
+                gameOverShareEmailBtn.addEventListener('click', shareGameOverViaEmail);
+            }
+            
+            const gameOverShareCopyBtn = document.getElementById('gameOverShareCopyBtn');
+            if (gameOverShareCopyBtn) {
+                gameOverShareCopyBtn.addEventListener('click', copyGameOverToClipboard);
+            }
+            
+            const gameOverCloseBtn = document.getElementById('gameOverCloseBtn');
+            if (gameOverCloseBtn) {
+                gameOverCloseBtn.addEventListener('click', closeGameOverModal);
+            }
+        }
+        
+        // Initialize everything
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing game...');
+            createParticles();
+            addEventListeners();
+            initGame();
+        });
+        
+        // Handle visibility change to pause/resume timer
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && !isGameComplete && gameStarted) {
+                stopTimer();
+            } else if (!document.hidden && !isGameComplete && startTime && gameStarted) {
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
