@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UnJumble">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <title>UnJumble</title>
     <style>
         * {
@@ -12,13 +17,29 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
             background-attachment: fixed;
             min-height: 100vh;
             padding: 16px;
             color: #0f172a;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+        
+        /* iOS-specific styles */
+        body.ios {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        body.ios.standalone {
+            padding-top: calc(20px + env(safe-area-inset-top));
         }
         
         .particles {
@@ -118,7 +139,6 @@
             width: 320px;
             height: 320px;
             object-fit: contain;
-            /* Removed the filter so logo shows in original colors */
         }
         
         .nyu-logo-small {
@@ -151,7 +171,6 @@
             position: relative;
             z-index: 2;
             letter-spacing: -0.03em;
-            font-family: 'Inter', sans-serif;
         }
         
         .subtitle {
@@ -161,7 +180,6 @@
             position: relative;
             z-index: 2;
             margin-top: 8px;
-            font-family: 'Inter', sans-serif;
         }
         
         .stats-bar {
@@ -198,7 +216,6 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            font-family: 'Inter', sans-serif;
         }
         
         .stat-value {
@@ -207,37 +224,10 @@
             color: #0f172a;
             margin-top: 4px;
             font-variant-numeric: tabular-nums;
-            font-family: 'Inter', sans-serif;
         }
         
         .game-area {
             padding: 40px;
-        }
-        
-        .instructions {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 32px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .instructions h3 {
-            color: #475569;
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .instructions p {
-            color: #64748b;
-            line-height: 1.6;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
         }
         
         .puzzle-container {
@@ -258,7 +248,6 @@
             color: #1e293b;
             font-size: 1.125rem;
             font-weight: 600;
-            font-family: 'Inter', sans-serif;
         }
         
         .puzzle-attribution {
@@ -267,7 +256,6 @@
             color: #64748b;
             font-size: 0.875rem;
             font-style: italic;
-            font-family: 'Inter', sans-serif;
             line-height: 1.4;
             padding: 0 16px;
         }
@@ -371,6 +359,21 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            -webkit-appearance: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        /* iOS-specific button styles */
+        body.ios .control-button {
+            width: 44px;
+            height: 44px;
+            line-height: 44px;
+            font-size: 16px;
+        }
+        
+        body.ios .sentence-controls {
+            gap: 16px;
         }
         
         .control-button:hover:not(:disabled) {
@@ -407,19 +410,6 @@
             box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3), 0 2px 4px -1px rgba(245, 158, 11, 0.06) !important;
         }
         
-        .position-indicator {
-            font-size: 0.75rem;
-            color: #6b7280;
-            font-weight: 600;
-            background: #f3f4f6;
-            padding: 4px 8px;
-            border-radius: 12px;
-            min-width: 28px;
-            text-align: center;
-            border: 1px solid #e5e7eb;
-            display: none; /* Hidden since we removed position indicators */
-        }
-        
         .submit-area {
             text-align: center;
             margin-bottom: 24px;
@@ -439,7 +429,6 @@
             text-transform: none;
             letter-spacing: 0;
             min-width: 160px;
-            font-family: 'Inter', sans-serif;
             display: inline-block !important;
             text-decoration: none !important;
             user-select: none;
@@ -856,6 +845,18 @@
             margin-top: 2px;
         }
         
+        .ios-instruction {
+            display: none;
+        }
+        
+        body.ios .ios-instruction {
+            display: flex;
+        }
+        
+        body.ios .desktop-instruction {
+            display: none;
+        }
+        
         .welcome-tips {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             border: 1px solid #fbbf24;
@@ -913,6 +914,36 @@
         @media (max-width: 768px) {
             body {
                 padding: 12px;
+            }
+            
+            /* iOS-specific mobile styles */
+            body.ios {
+                padding: 8px;
+                padding-top: calc(8px + env(safe-area-inset-top));
+                padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            }
+            
+            body.ios .sentence-card {
+                padding: 18px;
+                border-radius: 12px;
+            }
+            
+            body.ios .sentence-text {
+                font-size: 16px; /* Prevents iOS zoom on focus */
+                line-height: 1.5;
+            }
+            
+            body.ios .submit-button {
+                font-size: 18px;
+                padding: 16px 36px;
+                min-height: 50px;
+            }
+            
+            body.ios .control-button {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 18px;
             }
             
             .game-card {
@@ -1021,7 +1052,6 @@
             </div>
             
             <div class="game-area" id="gameArea">
-
                 <div class="puzzle-container" id="puzzleContainer">
                     <div class="puzzle-title" id="puzzleTitle">Arrange the Sentences</div>
                     <div class="sentence-list" id="sentenceList">
@@ -1049,17 +1079,29 @@
             <div class="welcome-instructions">
                 <h3>🎯 How to Play</h3>
                 <ul class="instruction-list">
-                    <li class="instruction-item">
+                    <li class="instruction-item desktop-instruction">
                         <span class="instruction-icon">⬆️</span>
                         <span>Single click green arrows to move sentences up one position</span>
                     </li>
-                    <li class="instruction-item">
+                    <li class="instruction-item ios-instruction">
+                        <span class="instruction-icon">⬆️</span>
+                        <span>Tap green arrows to move sentences up one position</span>
+                    </li>
+                    <li class="instruction-item desktop-instruction">
                         <span class="instruction-icon">⬇️</span>
                         <span>Single click orange arrows to move sentences down one position</span>
                     </li>
-                    <li class="instruction-item">
+                    <li class="instruction-item ios-instruction">
+                        <span class="instruction-icon">⬇️</span>
+                        <span>Tap orange arrows to move sentences down one position</span>
+                    </li>
+                    <li class="instruction-item desktop-instruction">
                         <span class="instruction-icon">⚡</span>
                         <span>Double click arrows to jump to the top or bottom instantly</span>
+                    </li>
+                    <li class="instruction-item ios-instruction">
+                        <span class="instruction-icon">⚡</span>
+                        <span>Hold arrows for half a second to jump to top or bottom</span>
                     </li>
                     <li class="instruction-item">
                         <span class="instruction-icon">✅</span>
@@ -1089,45 +1131,45 @@
         <div class="puzzle-selector" id="puzzleSelector">
             <!-- Puzzle buttons will be generated here -->
         </div>
-                    <button class="cheat-close" id="cheatCloseBtn">Close</button>
+        <button class="cheat-close" id="cheatCloseBtn">Close</button>
     </div>
     
-            <!-- Game Over Modal -->
-        <div class="victory-modal" id="gameOverModal">
-            <div class="victory-content">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 16px;">
-                    <img src="https://i.imgur.com/iIODsNl.png" alt="NYU Logo" class="nyu-logo-small">
-                    <div class="victory-emoji">😔</div>
-                </div>
-                <h2 class="victory-title">Game Over</h2>
-                <p>You've used all 3 attempts on today's puzzle.</p>
-                
-                <div class="victory-stats">
-                    <div class="victory-time" id="gameOverTime">3:45</div>
-                    <div class="victory-attempts" style="color: #ef4444;">3 attempts used</div>
-                    <p style="margin-top: 12px; color: #6b7280;">Don't worry - come back tomorrow for a new puzzle!</p>
-                </div>
-                
-                <div class="share-buttons">
-                    <button class="share-btn twitter-btn" id="gameOverShareTwitterBtn">
-                        🐦 Tweet
-                    </button>
-                    <button class="share-btn text-btn" id="gameOverShareSMSBtn">
-                        📱 Text
-                    </button>
-                    <button class="share-btn email-btn" id="gameOverShareEmailBtn">
-                        ✉️ Email
-                    </button>
-                    <button class="share-btn copy-btn" id="gameOverShareCopyBtn">
-                        📋 Copy
-                    </button>
-                </div>
-                
-                <button class="close-btn" id="gameOverCloseBtn">Continue</button>
+    <!-- Game Over Modal -->
+    <div class="victory-modal" id="gameOverModal">
+        <div class="victory-content">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 16px;">
+                <img src="https://i.imgur.com/iIODsNl.png" alt="NYU Logo" class="nyu-logo-small">
+                <div class="victory-emoji">😔</div>
             </div>
+            <h2 class="victory-title">Game Over</h2>
+            <p>You've used all 3 attempts on today's puzzle.</p>
+            
+            <div class="victory-stats">
+                <div class="victory-time" id="gameOverTime">3:45</div>
+                <div class="victory-attempts" style="color: #ef4444;">3 attempts used</div>
+                <p style="margin-top: 12px; color: #6b7280;">Don't worry - come back tomorrow for a new puzzle!</p>
+            </div>
+            
+            <div class="share-buttons">
+                <button class="share-btn twitter-btn" id="gameOverShareTwitterBtn">
+                    🐦 Tweet
+                </button>
+                <button class="share-btn text-btn" id="gameOverShareSMSBtn">
+                    📱 Text
+                </button>
+                <button class="share-btn email-btn" id="gameOverShareEmailBtn">
+                    ✉️ Email
+                </button>
+                <button class="share-btn copy-btn" id="gameOverShareCopyBtn">
+                    📋 Copy
+                </button>
+            </div>
+            
+            <button class="close-btn" id="gameOverCloseBtn">Continue</button>
         </div>
-        
-        <!-- Victory Modal -->
+    </div>
+    
+    <!-- Victory Modal -->
     <div class="victory-modal" id="victoryModal">
         <div class="victory-content">
             <div class="victory-emoji">🎉</div>
@@ -1160,6 +1202,84 @@
     </div>
     
     <script>
+        // iOS Detection and Optimization
+        function detectiOS() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Check if it's an iPhone, iPad, or iPod
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return true;
+            }
+            
+            // Also check for iOS 13+ iPad (which reports as Mac)
+            if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function isStandalone() {
+            return window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+        }
+        
+        function optimizeForiOS() {
+            if (detectiOS()) {
+                document.body.classList.add('ios');
+                
+                // Add standalone class if running as web app
+                if (isStandalone()) {
+                    document.body.classList.add('standalone');
+                }
+                
+                // Prevent bounce scrolling
+                document.addEventListener('touchmove', function(e) {
+                    if (e.target.closest('.sentence-list') || e.target.closest('.puzzle-container')) {
+                        // Allow scrolling in sentence list
+                        return;
+                    }
+                    if (e.scale !== 1) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                // Improve touch responsiveness
+                document.addEventListener('touchstart', function() {}, { passive: true });
+                
+                // Handle orientation changes
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(function() {
+                        window.scrollTo(0, 0);
+                    }, 100);
+                });
+                
+                // Fix viewport height on iOS
+                function setViewportHeight() {
+                    const vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', `${vh}px`);
+                }
+                
+                setViewportHeight();
+                window.addEventListener('resize', setViewportHeight);
+                window.addEventListener('orientationchange', setViewportHeight);
+                
+                // Prevent double-tap zoom
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', function(e) {
+                    const now = Date.now();
+                    if (now - lastTouchEnd <= 300) {
+                        e.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, false);
+                
+                // iOS-specific share functionality
+                if (navigator.share) {
+                    console.log('Native sharing available on iOS');
+                }
+            }
+        }
+        
         // Puzzle database
         const puzzles = [
             {
@@ -1485,35 +1605,86 @@
                     </div>
                 `;
                 
-                // Add event listeners instead of inline handlers
+                // Add event listeners for buttons
                 const upBtn = card.querySelector('.up-btn');
                 const downBtn = card.querySelector('.down-btn');
                 
                 if (upBtn && !isFirst) {
-                    upBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        handleMove(position, 'up');
-                    });
-                    upBtn.addEventListener('dblclick', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        performJumpMove(position, 'up');
-                    });
+    if (detectiOS()) {
+        let touchTimer = null;
+        let touchStartTime = 0;
+
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchStartTime = Date.now();
+            touchTimer = setTimeout(() => {
+                performJumpMove(position, 'up');
+                touchTimer = null;
+            }, 400);
+        });
+
+        upBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+                if (Date.now() - touchStartTime < 400) {
+                    handleMove(position, 'up');
                 }
-                
-                if (downBtn && !isLast) {
-                    downBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        handleMove(position, 'down');
-                    });
-                    downBtn.addEventListener('dblclick', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        performJumpMove(position, 'down');
-                    });
+            }
+        });
+    } else {
+        upBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleMove(position, 'up');
+        });
+        upBtn.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            performJumpMove(position, 'up');
+        });
+    }
+}
+
+if (downBtn && !isLast) {
+    if (detectiOS()) {
+        let touchTimer = null;
+        let touchStartTime = 0;
+
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchStartTime = Date.now();
+            touchTimer = setTimeout(() => {
+                performJumpMove(position, 'down');
+                touchTimer = null;
+            }, 400);
+        });
+
+        downBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+                if (Date.now() - touchStartTime < 400) {
+                    handleMove(position, 'down');
                 }
-                
-                sentenceList.appendChild(card);
+            }
+        });
+    } else {
+        downBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleMove(position, 'down');
+        });
+        downBtn.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            performJumpMove(position, 'down');
+        });
+    }
+}
+
+
+sentenceList.appendChild(card);
             });
         }
         
@@ -1845,22 +2016,55 @@
         }
         
         function shareToTwitter() {
-            const text = encodeURIComponent(getShareText());
-            const url = `https://twitter.com/intent/tweet?text=${text}`;
-            window.open(url, '_blank');
+            const text = getShareText();
+            
+            // Try native sharing first on iOS
+            if (detectiOS() && navigator.share) {
+                navigator.share({
+                    text: text
+                }).catch(err => {
+                    // Fallback to Twitter web intent
+                    const encoded = encodeURIComponent(text);
+                    const url = `https://twitter.com/intent/tweet?text=${encoded}`;
+                    window.open(url, '_blank');
+                });
+            } else {
+                const encoded = encodeURIComponent(text);
+                const url = `https://twitter.com/intent/tweet?text=${encoded}`;
+                window.open(url, '_blank');
+            }
         }
         
         function shareViaSMS() {
-            const text = encodeURIComponent(getShareText());
-            const url = `sms:?body=${text}`;
-            window.open(url);
+            const text = getShareText();
+            
+            // iOS native sharing
+            if (detectiOS() && navigator.share) {
+                navigator.share({
+                    text: text
+                }).catch(err => {
+                    const encoded = encodeURIComponent(text);
+                    const url = `sms:?body=${encoded}`;
+                    window.location.href = url;
+                });
+            } else {
+                const encoded = encodeURIComponent(text);
+                const url = `sms:?body=${encoded}`;
+                window.open(url);
+            }
         }
         
         function shareViaEmail() {
             const subject = encodeURIComponent('Check out my UnJumble results!');
             const body = encodeURIComponent(getShareText());
             const url = `mailto:?subject=${subject}&body=${body}`;
-            window.open(url);
+            
+            // iOS handles mailto links well
+            if (detectiOS()) {
+                window.location.href = url;
+            } else {
+                window.open(url);
+            }
         }
         
         function copyToClipboard() {
@@ -1980,6 +2184,18 @@
         // Initialize everything
         window.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing game...');
+            
+            // Apply iOS optimizations first
+            optimizeForiOS();
+            
+            // Log iOS detection for debugging
+            if (detectiOS()) {
+                console.log('iOS device detected - optimizations applied');
+                if (isStandalone()) {
+                    console.log('Running as standalone web app');
+                }
+            }
+            
             createParticles();
             addEventListeners();
             initGame();
