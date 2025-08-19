@@ -1165,7 +1165,7 @@
                 <div class="victory-emoji">😔</div>
             </div>
             <h2 class="victory-title">Game Over</h2>
-            <p>You've used all 3 attempts on today's puzzle.</p>
+            <p>You've used all 5 attempts on today's puzzle.</p>
             
             <div class="victory-stats">
                 <div class="victory-time" id="gameOverTime">3:45</div>
@@ -1460,6 +1460,7 @@
         let cheatModeActive = false;
         let currentPuzzleIndex = 0;
         let gameStarted = false;
+        let gameOverProgress = { correctPositions: 0, longestCorrectSequence: 0 };
         
         // Cheat code detection
         let cheatInput = '';
@@ -1949,15 +1950,11 @@ sentenceList.appendChild(card);
             isGameComplete = true;
             stopTimer();
             
-            const feedback = document.getElementById('feedback');
-            feedback.className = 'feedback game-over show';
-
-            // Calculate how many sentences were in correct positions
+            // Calculate progress BEFORE changing currentOrder
             const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
                 return sentenceIndex === correctOrder[position] ? count + 1 : count;
             }, 0);
 
-            // Find the longest correct sequence from the beginning
             let longestCorrectSequence = 0;
             for (let i = 0; i < currentOrder.length; i++) {
                 if (currentOrder[i] === correctOrder[i]) {
@@ -1966,6 +1963,9 @@ sentenceList.appendChild(card);
                     break;
                 }
             }
+
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback game-over show';
 
             const correctOrderText = correctOrder.map((i, pos) => 
                 `<strong>${pos + 1}.</strong> ${currentPuzzle.sentences[i]}`
@@ -1980,12 +1980,16 @@ sentenceList.appendChild(card);
             
             document.getElementById('submitButton').disabled = true;
             
+            // NOW rearrange to correct order and recreate cards
             currentOrder = [...correctOrder];
             createSentenceCards();
             
             if (!cheatModeActive) {
                 markCompletedToday();
             }
+
+            // After calculating progress, save it
+            gameOverProgress = { correctPositions, longestCorrectSequence };
             
             // Show game over modal after a delay
             setTimeout(() => {
@@ -1994,53 +1998,31 @@ sentenceList.appendChild(card);
         }
         
         function showGameOverModal() {
-            const gameOverTime = document.getElementById('timer').textContent;
+                const gameOverTime = document.getElementById('timer').textContent;
 
-            // Calculate progress for the modal
-            const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
-                return sentenceIndex === correctOrder[position] ? count + 1 : count;
-            }, 0);
+                // Use saved progress values instead of recalculating
+                const { correctPositions, longestCorrectSequence } = gameOverProgress;
 
-            let longestCorrectSequence = 0;
-            for (let i = 0; i < currentOrder.length; i++) {
-                if (currentOrder[i] === correctOrder[i]) {
-                    longestCorrectSequence++;
-                } else {
-                    break;
-                }
+                // Update the modal with progress info
+                const gameOverAttemptsElement = document.querySelector('#gameOverModal .victory-attempts');
+                gameOverAttemptsElement.innerHTML = `5 attempts used<br><small style="color: #6b7280; font-weight: normal;">Got first ${longestCorrectSequence} sentence${longestCorrectSequence === 1 ? '' : 's'} correct</small>`;  
+                                
+                document.getElementById('gameOverTime').textContent = gameOverTime;
+                document.getElementById('gameOverModal').classList.add('active');
             }
-
-            // Update the modal with progress info
-            const gameOverAttemptsElement = document.querySelector('#gameOverModal .victory-attempts');
-            gameOverAttemptsElement.innerHTML = `5 attempts used<br><small style="color: #6b7280; font-weight: normal;">Got first ${longestCorrectSequence} sentence${longestCorrectSequence === 1 ? '' : 's'} correct</small>`;  
-                        
-            document.getElementById('gameOverTime').textContent = gameOverTime;
-            document.getElementById('gameOverModal').classList.add('active');
-        }
         
-        function getGameOverShareText() {
-            const time = document.getElementById('gameOverTime').textContent;
-            const maxAttempts = 5;
-            
-            // Calculate progress
-            const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
-                return sentenceIndex === correctOrder[position] ? count + 1 : count;
-            }, 0);
-            
-            let longestCorrectSequence = 0;
-            for (let i = 0; i < currentOrder.length; i++) {
-                if (currentOrder[i] === correctOrder[i]) {
-                    longestCorrectSequence++;
-                } else {
-                    break;
-                }
+            function getGameOverShareText() {
+                const time = document.getElementById('gameOverTime').textContent;
+                const maxAttempts = 5;
+                
+                // Use saved progress values
+                const { longestCorrectSequence } = gameOverProgress;
+                
+                // Show all red squares for game over
+                const attemptSquares = Array(maxAttempts).fill('🟥').join('');
+                
+                return `UnJumble #${currentPuzzleIndex + 1}\n${attemptSquares}\nTime: ${time}\nGot first ${longestCorrectSequence}/${currentOrder.length} sentences correct\n\nI didn't solve today's puzzle, but you can try! Play at: https://landfair.github.io/UnJumble/`;
             }
-            
-            // Show all red squares for game over
-            const attemptSquares = Array(maxAttempts).fill('🟥').join('');
-            
-            return `UnJumble #${currentPuzzleIndex + 1}\n${attemptSquares}\nTime: ${time}\nGot first ${longestCorrectSequence}/${currentOrder.length} sentences correct\n\nI didn't solve today's puzzle, but you can try! Play at: https://landfair.github.io/UnJumble/`;
-        }
         
         function shareGameOverToTwitter() {
             const text = encodeURIComponent(getGameOverShareText());
@@ -2092,9 +2074,16 @@ sentenceList.appendChild(card);
         function closeGameOverModal() {
             document.getElementById('gameOverModal').classList.remove('active');
             
-            if (!cheatModeActive) {
-                showCompletedMessage();
+            // Don't automatically show completed message - let user study the correct order
+            // Only show completed message if they're in cheat mode
+            if (cheatModeActive) {
+                // In cheat mode, they can continue playing other puzzles
+                return;
             }
+            
+            // For regular users who lost, keep them on the game screen
+            // They can see the correct order and will get the completed message
+            // when they refresh or come back tomorrow
         }
         
         function handleVictory() {
