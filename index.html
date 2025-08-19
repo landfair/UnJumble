@@ -1066,7 +1066,7 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Attempts</div>
-                    <div class="stat-value" id="attemptsRemaining">3/3</div>
+                    <div class="stat-value" id="attemptsRemaining">5/5</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Timer</div>
@@ -1132,7 +1132,7 @@
                     </li>
                     <li class="instruction-item">
                         <span class="instruction-icon">❌</span>
-                        <span>You have 3 attempts to solve today's puzzle</span>
+                        <span>You have 5 attempts to solve today's puzzle</span>
                     </li>
                 </ul>
             </div>
@@ -1169,7 +1169,7 @@
             
             <div class="victory-stats">
                 <div class="victory-time" id="gameOverTime">3:45</div>
-                <div class="victory-attempts" style="color: #ef4444;">3 attempts used</div>
+                <div class="victory-attempts" style="color: #ef4444;">5 attempts used</div>
                 <p style="margin-top: 12px; color: #6b7280;">Don't worry - come back tomorrow for a new puzzle!</p>
             </div>
             
@@ -1453,7 +1453,7 @@
         let currentOrder = [];
         let correctOrder = [];
         let attemptCount = 0;
-        let maxAttempts = 3;
+        let maxAttempts = 5;
         let startTime = null;
         let timerInterval = null;
         let isGameComplete = false;
@@ -1951,13 +1951,29 @@ sentenceList.appendChild(card);
             
             const feedback = document.getElementById('feedback');
             feedback.className = 'feedback game-over show';
-            
+
+            // Calculate how many sentences were in correct positions
+            const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
+                return sentenceIndex === correctOrder[position] ? count + 1 : count;
+            }, 0);
+
+            // Find the longest correct sequence from the beginning
+            let longestCorrectSequence = 0;
+            for (let i = 0; i < currentOrder.length; i++) {
+                if (currentOrder[i] === correctOrder[i]) {
+                    longestCorrectSequence++;
+                } else {
+                    break;
+                }
+            }
+
             const correctOrderText = correctOrder.map((i, pos) => 
                 `<strong>${pos + 1}.</strong> ${currentPuzzle.sentences[i]}`
             ).join('<br><br>');
-            
+
             feedback.innerHTML = `
                 <strong>Game Over!</strong><br><br>
+                <strong>Your Progress:</strong> You got the first ${longestCorrectSequence} sentence${longestCorrectSequence === 1 ? '' : 's'} in the correct position${correctPositions !== longestCorrectSequence ? ` (${correctPositions} total sentences were correctly placed)` : ''}.<br><br>
                 <strong>The correct order was:</strong><br><br>
                 ${correctOrderText}
             `;
@@ -1979,19 +1995,51 @@ sentenceList.appendChild(card);
         
         function showGameOverModal() {
             const gameOverTime = document.getElementById('timer').textContent;
-            
+
+            // Calculate progress for the modal
+            const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
+                return sentenceIndex === correctOrder[position] ? count + 1 : count;
+            }, 0);
+
+            let longestCorrectSequence = 0;
+            for (let i = 0; i < currentOrder.length; i++) {
+                if (currentOrder[i] === correctOrder[i]) {
+                    longestCorrectSequence++;
+                } else {
+                    break;
+                }
+            }
+
+            // Update the modal with progress info
+            const gameOverAttemptsElement = document.querySelector('#gameOverModal .victory-attempts');
+            gameOverAttemptsElement.innerHTML = `5 attempts used<br><small style="color: #6b7280; font-weight: normal;">Got first ${longestCorrectSequence} sentence${longestCorrectSequence === 1 ? '' : 's'} correct</small>`;  
+                        
             document.getElementById('gameOverTime').textContent = gameOverTime;
             document.getElementById('gameOverModal').classList.add('active');
         }
         
         function getGameOverShareText() {
             const time = document.getElementById('gameOverTime').textContent;
-            const maxAttempts = 3;
+            const maxAttempts = 5;
+            
+            // Calculate progress
+            const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
+                return sentenceIndex === correctOrder[position] ? count + 1 : count;
+            }, 0);
+            
+            let longestCorrectSequence = 0;
+            for (let i = 0; i < currentOrder.length; i++) {
+                if (currentOrder[i] === correctOrder[i]) {
+                    longestCorrectSequence++;
+                } else {
+                    break;
+                }
+            }
             
             // Show all red squares for game over
             const attemptSquares = Array(maxAttempts).fill('🟥').join('');
             
-            return `UnJumble #${currentPuzzleIndex + 1}\n${attemptSquares}\nTime: ${time}\n\nI didn't solve today's puzzle, but you can try! Play at: https://landfair.github.io/UnJumble/`;
+            return `UnJumble #${currentPuzzleIndex + 1}\n${attemptSquares}\nTime: ${time}\nGot first ${longestCorrectSequence}/${currentOrder.length} sentences correct\n\nI didn't solve today's puzzle, but you can try! Play at: https://landfair.github.io/UnJumble/`;
         }
         
         function shareGameOverToTwitter() {
@@ -2126,7 +2174,7 @@ sentenceList.appendChild(card);
         function getShareText() {
             const time = document.getElementById('finalTime').textContent;
             const attempts = attemptCount;
-            const maxAttempts = 3;
+            const maxAttempts = 5;
             
             const attemptSquares = Array(maxAttempts).fill('⬜').map((square, index) => {
                 if (index < attempts - 1) return '🟥';
