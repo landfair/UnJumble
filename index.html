@@ -1950,14 +1950,17 @@ sentenceList.appendChild(card);
             isGameComplete = true;
             stopTimer();
             
-            // Calculate progress BEFORE changing currentOrder
-            const correctPositions = currentOrder.reduce((count, sentenceIndex, position) => {
+            // Save the user's failed attempt order for progress calculation
+            const userAttemptOrder = [...currentOrder];
+
+            // Calculate progress based on user's actual attempt
+            const correctPositions = userAttemptOrder.reduce((count, sentenceIndex, position) => {
                 return sentenceIndex === correctOrder[position] ? count + 1 : count;
             }, 0);
 
             let longestCorrectSequence = 0;
-            for (let i = 0; i < currentOrder.length; i++) {
-                if (currentOrder[i] === correctOrder[i]) {
+            for (let i = 0; i < userAttemptOrder.length; i++) {
+                if (userAttemptOrder[i] === correctOrder[i]) {
                     longestCorrectSequence++;
                 } else {
                     break;
@@ -1983,6 +1986,15 @@ sentenceList.appendChild(card);
             // NOW rearrange to correct order and recreate cards
             currentOrder = [...correctOrder];
             createSentenceCards();
+
+            // Mark all cards as correct since they're now in the right order
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.sentence-card');
+                cards.forEach(card => {
+                    card.classList.remove('error');
+                    card.classList.add('correct');
+                });
+            }, 100);
             
             if (!cheatModeActive) {
                 markCompletedToday();
