@@ -459,6 +459,17 @@
             -moz-user-select: none;
             -ms-user-select: none;
         }
+
+        .submit-button.clicked {
+            transform: translateY(2px) scale(0.98) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        }
+
+        .submit-button.processing {
+            pointer-events: none;
+            opacity: 0.8;
+        }
         
         .submit-button:hover {
             transform: translateY(-1px) !important;
@@ -1899,18 +1910,41 @@ sentenceList.appendChild(card);
                 startTimer();
             }
             
+            // Add visual feedback for button click
+            const submitButton = document.getElementById('submitButton');
+            submitButton.classList.add('clicked', 'processing');
+            
+            // Remove the clicked effect after a short delay
+            setTimeout(() => {
+                submitButton.classList.remove('clicked');
+            }, 150);
+            
             attemptCount++;
             updateAttemptsDisplay();
             
             const isCorrect = arraysEqual(currentOrder, correctOrder);
             
             if (isCorrect) {
+                submitButton.classList.remove('processing');
                 handleVictory();
                 return;
             }
             
             const firstErrorPosition = findFirstError();
             showFeedback(firstErrorPosition);
+            
+            // Auto-scroll to the top of the sentence list to show feedback
+            setTimeout(() => {
+                const sentenceList = document.getElementById('sentenceList');
+                if (sentenceList) {
+                    sentenceList.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start',
+                        inline: 'nearest'
+                    });
+                }
+                submitButton.classList.remove('processing');
+            }, 100);
             
             if (attemptCount >= maxAttempts) {
                 handleGameOver();
@@ -1932,6 +1966,15 @@ sentenceList.appendChild(card);
             feedback.innerHTML = `❌ First error is at position ${errorPosition}. ${maxAttempts - attemptCount} attempts remaining.`;
             
             highlightErrorPosition(errorPosition);
+            
+            // Ensure feedback is visible by scrolling to it
+            setTimeout(() => {
+                feedback.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }, 200);
         }
         
         function highlightErrorPosition(position) {
