@@ -60,6 +60,37 @@
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
         }
+
+        /* Add this inside the existing @media (max-width: 768px) block */
+        body.ios .header-content {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        body.ios .nyu-logo {
+            width: 120px;
+            height: 120px;
+        }
+
+        body.ios .header-text {
+            order: 2;
+        }
+
+        body.ios .header {
+            padding: 20px 16px;
+        }
+
+        /* For very small screens, make logo even smaller */
+        @media (max-width: 480px) {
+            body.ios .nyu-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            body.ios .logo {
+                font-size: 2rem;
+            }
+        }
         
         body.ios.standalone {
             padding-top: calc(20px + env(safe-area-inset-top));
