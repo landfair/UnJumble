@@ -41,11 +41,11 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #ddd6fe 100%);
             background-attachment: fixed;
             min-height: 100vh;
-            padding: 16px;
-            color: #0f172a;
+            padding: 20px;
+            color: #1e1b2e;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -139,15 +139,15 @@
         }
         
         .game-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            box-shadow: 
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 24px;
+            box-shadow:
+                0 30px 60px -12px rgba(87, 6, 140, 0.15),
+                0 18px 36px -18px rgba(87, 6, 140, 0.12),
+                0 0 0 1px rgba(87, 6, 140, 0.08);
             overflow: hidden;
             animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid rgba(203, 213, 225, 0.3);
         }
         
         @keyframes slideUp {
@@ -162,8 +162,8 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 50%, #6d28d9 100%);
-            padding: 32px;
+            background: linear-gradient(135deg, #57068c 0%, #6d1ba8 50%, #8b2fc4 100%);
+            padding: 48px 32px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -171,6 +171,7 @@
             align-items: center;
             justify-content: center;
             gap: 24px;
+            border-radius: 24px 24px 0 0;
         }
         
         .header-content {
@@ -218,65 +219,82 @@
         }
         
         .logo {
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
-            font-weight: 700;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
             color: white;
             margin: 0;
             position: relative;
             z-index: 2;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.04em;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
         }
-        
+
         .subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.125rem;
+            font-weight: 400;
             position: relative;
             z-index: 2;
             margin-top: 8px;
+            letter-spacing: 0.01em;
         }
         
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 0;
-            background: #f8fafc;
+            background: linear-gradient(to bottom, #faf8ff, #ffffff);
             border-radius: 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 2px solid rgba(87, 6, 140, 0.08);
         }
-        
+
         .stat-item {
-            background: white;
-            padding: 20px;
+            background: transparent;
+            padding: 24px 20px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            border-right: 1px solid #e2e8f0;
+            border-right: 1px solid rgba(87, 6, 140, 0.08);
         }
-        
+
         .stat-item:last-child {
             border-right: none;
         }
-        
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #57068c, #8b2fc4);
+            transform: scaleX(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-item:hover::before {
+            transform: scaleX(1);
+        }
+
         .stat-item:hover {
-            background: #f8fafc;
-            transform: translateY(-1px);
+            background: rgba(87, 6, 140, 0.03);
         }
-        
+
         .stat-label {
-            font-size: 0.75rem;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
+            font-size: 0.688rem;
+            color: #8b5cf6;
             font-weight: 700;
-            color: #0f172a;
-            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #57068c;
+            margin-top: 6px;
             font-variant-numeric: tabular-nums;
         }
         
@@ -285,33 +303,37 @@
         }
         
         .puzzle-container {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 32px;
+            background: linear-gradient(to bottom, #ffffff, #fdfcff);
+            border: 2px solid rgba(87, 6, 140, 0.08);
+            border-radius: 20px;
+            padding: 40px;
             margin-bottom: 32px;
             min-height: 400px;
             position: relative;
             transition: all 0.3s ease;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            box-shadow:
+                0 4px 16px rgba(87, 6, 140, 0.04),
+                0 2px 8px rgba(87, 6, 140, 0.06);
         }
         
         .puzzle-title {
             text-align: center;
             margin-bottom: 16px;
-            color: #1e293b;
-            font-size: 1.125rem;
-            font-weight: 600;
+            color: #57068c;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
-        
+
         .puzzle-attribution {
             text-align: center;
-            margin-bottom: 24px;
-            color: #64748b;
-            font-size: 0.875rem;
+            margin-bottom: 32px;
+            color: #8b5cf6;
+            font-size: 0.9375rem;
             font-style: italic;
-            line-height: 1.4;
+            line-height: 1.5;
             padding: 0 16px;
+            font-weight: 500;
         }
         
         .sentence-list {
@@ -321,48 +343,32 @@
         }
         
         .sentence-card {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 20px 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%);
+            border: 2px solid rgba(87, 6, 140, 0.12);
+            border-radius: 20px;
+            padding: 24px 28px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: visible;
+            overflow: hidden;
             display: flex;
             align-items: center;
-            gap: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            gap: 20px;
+            box-shadow:
+                0 4px 12px rgba(87, 6, 140, 0.06),
+                0 1px 3px rgba(87, 6, 140, 0.08);
             /* Mobile performance optimizations */
             will-change: transform;
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            cursor: grab;
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
-        .sentence-card.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-            z-index: 1000;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            transform: scale(1.05) rotate(2deg);
-            border-color: #667eea;
-        }
-
-        .sentence-card.drag-over {
-            border-color: #10b981;
-            border-style: dashed;
-            background: linear-gradient(135deg, #ecfdf5 0%, white 100%);
-            transform: translateY(-4px);
-        }
-
-        .sentence-card:hover:not(.dragging) {
+        .sentence-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-            border-color: #667eea;
+            box-shadow:
+                0 8px 20px rgba(87, 6, 140, 0.1),
+                0 3px 6px rgba(87, 6, 140, 0.08);
+            border-color: rgba(87, 6, 140, 0.2);
         }
         
         .sentence-card.recently-moved {
@@ -404,69 +410,36 @@
         
         .sentence-text {
             flex: 1;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #374151;
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: #1e1b2e;
             font-weight: 500;
-        }
-
-        .drag-handle {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            padding: 8px;
-            cursor: grab;
-            opacity: 0.4;
-            transition: opacity 0.2s ease;
-            touch-action: none;
-        }
-
-        .drag-handle:active {
-            cursor: grabbing;
-        }
-
-        .sentence-card:hover .drag-handle {
-            opacity: 0.7;
-        }
-
-        .drag-handle-dot {
-            width: 4px;
-            height: 4px;
-            background: #94a3b8;
-            border-radius: 50%;
-        }
-
-        body.ios .drag-handle {
-            padding: 12px;
-            gap: 4px;
-        }
-
-        body.ios .drag-handle-dot {
-            width: 5px;
-            height: 5px;
+            letter-spacing: -0.01em;
         }
 
         .sentence-controls {
-            display: none; /* Hide old button controls */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
         }
         
         .control-button {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white !important;
             border: none !important;
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
             cursor: pointer !important;
-            display: inline-block !important;
-            text-align: center;
-            line-height: 36px;
-            font-size: 14px;
-            font-weight: 600;
-            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease-out;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 12px rgba(87, 6, 140, 0.2);
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -476,56 +449,70 @@
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
             /* Mobile performance optimizations */
-            will-change: transform, opacity;
+            will-change: transform;
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
-        
+
+        .control-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .control-button:hover::before {
+            opacity: 1;
+        }
+
         /* iOS-specific button styles */
         body.ios .control-button {
-            width: 44px;
-            height: 44px;
-            line-height: 44px;
-            font-size: 16px;
+            width: 52px;
+            height: 52px;
+            font-size: 22px;
         }
-        
+
         body.ios .sentence-controls {
-            gap: 16px;
+            gap: 12px;
         }
-        
+
         .control-button:hover:not(:disabled) {
-            transform: translateY(-1px) scale(1.05) !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 0 8px 20px rgba(87, 6, 140, 0.3) !important;
             cursor: pointer !important;
         }
-        
+
         .control-button:active:not(:disabled) {
-            transform: translateY(0) scale(0.95) !important;
+            transform: translateY(-1px) scale(0.98) !important;
+            box-shadow: 0 4px 12px rgba(87, 6, 140, 0.2) !important;
         }
-        
+
         .control-button:disabled {
-            background: #cbd5e1 !important;
-            color: #94a3b8 !important;
+            background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%) !important;
+            color: #a78bfa !important;
             cursor: not-allowed !important;
             transform: none !important;
             box-shadow: none !important;
+            opacity: 0.4;
         }
-        
+
         .up-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            background: linear-gradient(135deg, #57068c 0%, #6d1ba8 100%) !important;
         }
-        
+
         .up-btn:hover:not(:disabled) {
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3), 0 2px 4px -1px rgba(16, 185, 129, 0.06) !important;
+            background: linear-gradient(135deg, #6d1ba8 0%, #7c22bb 100%) !important;
         }
-        
+
         .down-btn {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            background: linear-gradient(135deg, #8b2fc4 0%, #9f3dd6 100%) !important;
         }
-        
+
         .down-btn:hover:not(:disabled) {
-            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3), 0 2px 4px -1px rgba(245, 158, 11, 0.06) !important;
+            background: linear-gradient(135deg, #9f3dd6 0%, #b14ce8 100%) !important;
         }
         
         .submit-area {
@@ -534,25 +521,40 @@
         }
         
         .submit-button {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #57068c 0%, #6d1ba8 100%);
             color: white !important;
             border: none !important;
-            border-radius: 8px;
-            padding: 14px 32px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 16px;
+            padding: 18px 48px;
+            font-size: 1.125rem;
+            font-weight: 700;
             cursor: pointer !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 24px rgba(87, 6, 140, 0.25);
             text-transform: none;
-            letter-spacing: 0;
-            min-width: 160px;
+            letter-spacing: 0.02em;
+            min-width: 200px;
             display: inline-block !important;
             text-decoration: none !important;
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .submit-button:hover::before {
+            opacity: 1;
         }
 
         .submit-button.clicked {
@@ -567,9 +569,9 @@
         }
         
         .submit-button:hover {
-            transform: translateY(-1px) !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-            background: linear-gradient(135deg, #5855eb 0%, #7c3aed 100%) !important;
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 12px 32px rgba(87, 6, 140, 0.35) !important;
+            background: linear-gradient(135deg, #6d1ba8 0%, #7c22bb 100%) !important;
             cursor: pointer !important;
         }
         
@@ -745,12 +747,15 @@
         .victory-content {
             background: white;
             border-radius: 24px;
-            padding: 48px;
+            padding: 40px 32px;
             text-align: center;
             max-width: 500px;
             width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
             animation: victoryEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            -webkit-overflow-scrolling: touch;
         }
         
         @keyframes victoryEntrance {
@@ -901,12 +906,15 @@
         .welcome-modal {
             background: white;
             border-radius: 24px;
-            padding: 48px;
+            padding: 40px 32px;
             max-width: 500px;
             width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
             transform: scale(0.9);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            -webkit-overflow-scrolling: touch;
         }
         
         .welcome-overlay.active .welcome-modal {
@@ -914,12 +922,12 @@
         }
         
         .welcome-title {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: #1f2937;
             text-align: center;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #57068c 0%, #8b2fc4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -927,6 +935,7 @@
             align-items: center;
             justify-content: center;
             gap: 24px;
+            letter-spacing: -0.03em;
         }
         
         .welcome-subtitle {
@@ -987,30 +996,32 @@
         }
         
         .welcome-tips {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border: 1px solid #fbbf24;
-            border-radius: 12px;
-            padding: 16px;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
             margin-bottom: 32px;
             text-align: center;
-            color: #78350f;
-            font-weight: 500;
+            color: #6d28d9;
+            font-weight: 600;
+            letter-spacing: 0.01em;
         }
         
         .welcome-ready-btn {
             width: 100%;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #57068c 0%, #6d1ba8 100%);
             color: white;
             border: none;
-            border-radius: 16px;
-            padding: 18px 32px;
+            border-radius: 20px;
+            padding: 20px 32px;
             font-size: 1.25rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 24px rgba(87, 6, 140, 0.3);
             position: relative;
             overflow: hidden;
+            letter-spacing: 0.02em;
         }
         
         .welcome-ready-btn::before {
@@ -1032,8 +1043,9 @@
         }
         
         .welcome-ready-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 12px 32px rgba(87, 6, 140, 0.4);
+            background: linear-gradient(135deg, #6d1ba8 0%, #7c22bb 100%);
         }
         
         .welcome-ready-btn:active {
@@ -1042,110 +1054,308 @@
         
         @media (max-width: 768px) {
             body {
-                padding: 12px;
+                padding: 16px 12px;
             }
-            
+
             /* iOS-specific mobile styles */
             body.ios {
-                padding: 8px;
-                padding-top: calc(8px + env(safe-area-inset-top));
-                padding-bottom: calc(8px + env(safe-area-inset-bottom));
+                padding: 12px;
+                padding-top: calc(12px + env(safe-area-inset-top));
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
             }
-            
+
             body.ios .sentence-card {
-                padding: 18px;
-                border-radius: 12px;
+                padding: 20px;
+                border-radius: 16px;
             }
-            
+
             body.ios .sentence-text {
                 font-size: 16px; /* Prevents iOS zoom on focus */
-                line-height: 1.5;
+                line-height: 1.6;
             }
-            
+
             body.ios .submit-button {
                 font-size: 18px;
-                padding: 16px 36px;
-                min-height: 50px;
+                padding: 18px 40px;
+                min-height: 54px;
             }
-            
+
             body.ios .control-button {
-                width: 50px;
-                height: 50px;
-                line-height: 50px;
-                font-size: 18px;
+                width: 52px;
+                height: 52px;
+                font-size: 20px;
             }
-            
+
             .game-card {
                 border-radius: 20px;
             }
-            
+
             .header {
-                padding: 24px 20px;
+                padding: 32px 20px;
             }
-            
+
             .logo {
-                font-size: 2.5rem;
+                font-size: 2.25rem;
             }
-            
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
             .game-area {
-                padding: 24px 20px;
+                padding: 28px 20px;
             }
-            
+
+            .puzzle-container {
+                padding: 24px;
+            }
+
+            .puzzle-title {
+                font-size: 1.25rem;
+            }
+
+            .puzzle-attribution {
+                font-size: 0.875rem;
+            }
+
+            .sentence-card {
+                padding: 18px 20px;
+                gap: 14px;
+            }
+
+            .sentence-text {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+            }
+
+            .submit-button {
+                padding: 16px 36px;
+                font-size: 1.0625rem;
+                min-width: 180px;
+            }
+
+            .victory-content {
+                padding: 32px 24px;
+                max-height: 90vh;
+            }
+
+            .victory-title {
+                font-size: 2rem;
+            }
+
+            .victory-emoji {
+                font-size: 3rem;
+            }
+
+            .share-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .share-btn {
+                padding: 12px;
+                font-size: 0.8125rem;
+            }
+
+            .welcome-modal {
+                padding: 32px 24px;
+                max-height: 90vh;
+                width: 92%;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1rem;
+                margin-bottom: 24px;
+            }
+
+            .welcome-instructions {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .welcome-instructions h3 {
+                font-size: 1.125rem;
+            }
+
+            .instruction-item {
+                font-size: 0.9375rem;
+                margin-bottom: 10px;
+            }
+
+            .welcome-tips {
+                font-size: 0.9375rem;
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+
+            .welcome-ready-btn {
+                font-size: 1.125rem;
+                padding: 18px 28px;
+                min-height: 54px;
+            }
+
+            .control-button {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .sentence-controls {
+                gap: 10px;
+            }
+
+            .stat-item {
+                padding: 18px 16px;
+            }
+
+            .stat-label {
+                font-size: 0.625rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .nyu-logo {
+                width: 200px;
+                height: 200px;
+            }
+        }
+
+        /* Extra small phones (iPhone SE, etc) */
+        @media (max-width: 375px) {
+            body {
+                padding: 12px 10px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .logo {
+                font-size: 1.875rem;
+            }
+
+            .subtitle {
+                font-size: 0.9375rem;
+            }
+
+            .game-area {
+                padding: 20px 16px;
+            }
+
             .puzzle-container {
                 padding: 20px;
             }
-            
+
             .sentence-card {
-                padding: 16px 20px;
+                padding: 16px;
                 gap: 12px;
             }
-            
+
             .sentence-text {
-                font-size: 0.9rem;
+                font-size: 0.875rem;
             }
-            
+
+            .control-button {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
             .submit-button {
-                padding: 14px 32px;
+                padding: 14px 28px;
                 font-size: 1rem;
+                min-width: 160px;
             }
-            
-            .victory-content {
-                padding: 32px 24px;
-            }
-            
-            .share-buttons {
-                grid-template-columns: 1fr 1fr;
-            }
-            
+
             .welcome-modal {
-                padding: 32px 24px;
+                padding: 24px 20px;
+                width: 94%;
             }
-            
+
             .welcome-title {
                 font-size: 1.75rem;
             }
-            
-            .welcome-subtitle {
-                font-size: 1rem;
-            }
-            
+
             .welcome-instructions {
-                padding: 20px;
+                padding: 16px;
             }
-            
+
+            .instruction-item {
+                font-size: 0.875rem;
+            }
+
             .welcome-ready-btn {
-                font-size: 1.125rem;
+                font-size: 1rem;
                 padding: 16px 24px;
             }
-            
-            .control-button {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
+
+            .nyu-logo {
+                width: 150px;
+                height: 150px;
             }
-            
-            .sentence-controls {
-                gap: 8px;
+
+            .stat-value {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Landscape mode on small phones */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .welcome-modal,
+            .victory-content {
+                max-height: 92vh;
+                padding: 20px;
+            }
+
+            .welcome-title {
+                font-size: 1.5rem;
+                margin-bottom: 12px;
+            }
+
+            .welcome-subtitle {
+                font-size: 0.875rem;
+                margin-bottom: 16px;
+            }
+
+            .welcome-instructions {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .welcome-instructions h3 {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+
+            .instruction-item {
+                font-size: 0.8125rem;
+                margin-bottom: 8px;
+            }
+
+            .welcome-tips {
+                padding: 12px;
+                margin-bottom: 16px;
+                font-size: 0.875rem;
+            }
+
+            .welcome-ready-btn {
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+
+            .header {
+                padding: 20px 16px;
+            }
+
+            .nyu-logo {
+                width: 100px;
+                height: 100px;
             }
         }
     </style>
@@ -1208,25 +1418,17 @@
             <div class="welcome-instructions">
                 <h3>🎯 How to Play</h3>
                 <ul class="instruction-list">
-                    <li class="instruction-item desktop-instruction">
-                        <span class="instruction-icon">🖱️</span>
-                        <span>Click and drag sentences to reorder them</span>
-                    </li>
-                    <li class="instruction-item ios-instruction">
-                        <span class="instruction-icon">👆</span>
-                        <span>Touch and drag sentences to reorder them</span>
-                    </li>
-                    <li class="instruction-item desktop-instruction">
-                        <span class="instruction-icon">↕️</span>
-                        <span>Drag sentences to any position in the list</span>
-                    </li>
-                    <li class="instruction-item ios-instruction">
-                        <span class="instruction-icon">↕️</span>
-                        <span>Swipe sentences up or down to move them</span>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">↑</span>
+                        <span>Click the blue up button to move a sentence up</span>
                     </li>
                     <li class="instruction-item">
-                        <span class="instruction-icon">✨</span>
-                        <span>Look for the grip handle (⋮⋮) on each card</span>
+                        <span class="instruction-icon">↓</span>
+                        <span>Click the purple down button to move a sentence down</span>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">🎯</span>
+                        <span>Arrange all sentences in their correct order</span>
                     </li>
                     <li class="instruction-item">
                         <span class="instruction-icon">✅</span>
@@ -1240,7 +1442,7 @@
             </div>
 
             <div class="welcome-tips">
-                💡 Tip: Drag sentences into order - look for logical flow and connecting words!
+                💡 Tip: Look for logical flow and connecting words between sentences!
             </div>
             
             <button class="welcome-ready-btn" onclick="startGame()">
@@ -1835,233 +2037,34 @@
                 card.className = 'sentence-card';
                 card.dataset.originalIndex = sentenceIndex;
                 card.dataset.currentPosition = position;
-                card.draggable = false; // We'll handle drag manually for better mobile support
+
+                const isFirst = position === 0;
+                const isLast = position === currentOrder.length - 1;
 
                 card.innerHTML = `
-                    <div class="drag-handle" aria-label="Drag to reorder">
-                        <div class="drag-handle-dot"></div>
-                        <div class="drag-handle-dot"></div>
-                        <div class="drag-handle-dot"></div>
-                        <div class="drag-handle-dot"></div>
-                        <div class="drag-handle-dot"></div>
-                        <div class="drag-handle-dot"></div>
-                    </div>
                     <div class="sentence-text">${currentPuzzle.sentences[sentenceIndex]}</div>
+                    <div class="sentence-controls">
+                        <button class="control-button up-btn" ${isFirst ? 'disabled' : ''}
+                                data-position="${position}" aria-label="Move up">↑</button>
+                        <button class="control-button down-btn" ${isLast ? 'disabled' : ''}
+                                data-position="${position}" aria-label="Move down">↓</button>
+                    </div>
                 `;
 
-                // Add drag and drop event listeners
-                setupDragAndDrop(card);
+                // Add click event listeners to buttons
+                const upBtn = card.querySelector('.up-btn');
+                const downBtn = card.querySelector('.down-btn');
+
+                if (upBtn && !isFirst) {
+                    upBtn.addEventListener('click', () => handleMove(position, 'up'));
+                }
+
+                if (downBtn && !isLast) {
+                    downBtn.addEventListener('click', () => handleMove(position, 'down'));
+                }
 
                 sentenceList.appendChild(card);
             });
-        }
-
-        // Drag and Drop functionality
-        let dragState = {
-            isDragging: false,
-            draggedCard: null,
-            draggedIndex: null,
-            startY: 0,
-            currentY: 0,
-            offsetY: 0,
-            placeholder: null,
-            autoScrollInterval: null
-        };
-
-        function setupDragAndDrop(card) {
-            // Use touchstart for mobile, mousedown for desktop
-            card.addEventListener('touchstart', handleDragStart, { passive: false });
-            card.addEventListener('mousedown', handleDragStart);
-        }
-
-        function handleDragStart(e) {
-            if (isGameComplete) return;
-
-            // Only allow dragging from the card itself or drag handle
-            const target = e.target;
-            if (!target.closest('.sentence-card')) return;
-
-            const card = target.closest('.sentence-card');
-            const isTouchEvent = e.type === 'touchstart';
-
-            // Start timer if not started
-            if (!gameStarted) {
-                gameStarted = true;
-                startTimer();
-            }
-
-            // Haptic feedback on pickup
-            if (navigator.vibrate) {
-                navigator.vibrate(15);
-            }
-
-            dragState.isDragging = true;
-            dragState.draggedCard = card;
-            dragState.draggedIndex = parseInt(card.dataset.currentPosition);
-
-            const touch = isTouchEvent ? e.touches[0] : e;
-            const rect = card.getBoundingClientRect();
-
-            dragState.startY = touch.clientY;
-            dragState.offsetY = touch.clientY - rect.top;
-
-            // Add dragging class
-            card.classList.add('dragging');
-
-            // Add event listeners for move and end
-            if (isTouchEvent) {
-                document.addEventListener('touchmove', handleDragMove, { passive: false });
-                document.addEventListener('touchend', handleDragEnd);
-                document.addEventListener('touchcancel', handleDragEnd);
-            } else {
-                document.addEventListener('mousemove', handleDragMove);
-                document.addEventListener('mouseup', handleDragEnd);
-            }
-
-            e.preventDefault();
-        }
-
-        function handleDragMove(e) {
-            if (!dragState.isDragging) return;
-
-            const isTouchEvent = e.type === 'touchmove';
-            const touch = isTouchEvent ? e.touches[0] : e;
-
-            dragState.currentY = touch.clientY;
-
-            // Find the card we're hovering over
-            const sentenceCards = Array.from(document.querySelectorAll('.sentence-card:not(.dragging)'));
-            let hoveredCard = null;
-            let insertBefore = false;
-
-            for (const otherCard of sentenceCards) {
-                const rect = otherCard.getBoundingClientRect();
-                const midpoint = rect.top + rect.height / 2;
-
-                if (touch.clientY < midpoint && touch.clientY > rect.top) {
-                    hoveredCard = otherCard;
-                    insertBefore = true;
-                    break;
-                } else if (touch.clientY > midpoint && touch.clientY < rect.bottom) {
-                    hoveredCard = otherCard;
-                    insertBefore = false;
-                    break;
-                }
-            }
-
-            // Remove all drag-over classes
-            sentenceCards.forEach(c => c.classList.remove('drag-over'));
-
-            // Add drag-over class to hovered card
-            if (hoveredCard) {
-                hoveredCard.classList.add('drag-over');
-            }
-
-            // Auto-scroll when near edges
-            handleAutoScroll(touch.clientY);
-
-            e.preventDefault();
-        }
-
-        function handleDragEnd(e) {
-            if (!dragState.isDragging) return;
-
-            const isTouchEvent = e.type === 'touchend' || e.type === 'touchcancel';
-
-            // Stop auto-scroll
-            if (dragState.autoScrollInterval) {
-                clearInterval(dragState.autoScrollInterval);
-                dragState.autoScrollInterval = null;
-            }
-
-            // Find drop position
-            const sentenceCards = Array.from(document.querySelectorAll('.sentence-card:not(.dragging)'));
-            const touch = isTouchEvent ? e.changedTouches[0] : e;
-            let newIndex = dragState.draggedIndex;
-
-            for (let i = 0; i < sentenceCards.length; i++) {
-                const rect = sentenceCards[i].getBoundingClientRect();
-                const midpoint = rect.top + rect.height / 2;
-
-                if (touch.clientY < midpoint) {
-                    newIndex = parseInt(sentenceCards[i].dataset.currentPosition);
-                    break;
-                } else if (i === sentenceCards.length - 1) {
-                    newIndex = parseInt(sentenceCards[i].dataset.currentPosition) + 1;
-                }
-            }
-
-            // Adjust index if dragging down
-            if (newIndex > dragState.draggedIndex) {
-                newIndex--;
-            }
-
-            // Perform the move if position changed
-            if (newIndex !== dragState.draggedIndex) {
-                // Haptic feedback on drop
-                if (navigator.vibrate) {
-                    navigator.vibrate([10, 5, 10]);
-                }
-
-                // Update the order
-                const movedItem = currentOrder.splice(dragState.draggedIndex, 1)[0];
-                currentOrder.splice(newIndex, 0, movedItem);
-
-                // Recreate cards with animation
-                animateAndRecreate(newIndex);
-            } else {
-                // Just remove dragging class if no move
-                dragState.draggedCard.classList.remove('dragging');
-            }
-
-            // Clean up drag-over classes
-            sentenceCards.forEach(c => c.classList.remove('drag-over'));
-
-            // Remove event listeners
-            if (isTouchEvent) {
-                document.removeEventListener('touchmove', handleDragMove);
-                document.removeEventListener('touchend', handleDragEnd);
-                document.removeEventListener('touchcancel', handleDragEnd);
-            } else {
-                document.removeEventListener('mousemove', handleDragMove);
-                document.removeEventListener('mouseup', handleDragEnd);
-            }
-
-            // Reset drag state
-            dragState.isDragging = false;
-            dragState.draggedCard = null;
-            dragState.draggedIndex = null;
-
-            e.preventDefault();
-        }
-
-        function handleAutoScroll(clientY) {
-            const scrollThreshold = 100;
-            const scrollSpeed = 5;
-            const sentenceList = document.getElementById('sentenceList');
-
-            if (!sentenceList) return;
-
-            const rect = sentenceList.getBoundingClientRect();
-
-            // Clear existing interval
-            if (dragState.autoScrollInterval) {
-                clearInterval(dragState.autoScrollInterval);
-                dragState.autoScrollInterval = null;
-            }
-
-            // Scroll up
-            if (clientY < rect.top + scrollThreshold) {
-                dragState.autoScrollInterval = setInterval(() => {
-                    sentenceList.scrollTop -= scrollSpeed;
-                }, 16);
-            }
-            // Scroll down
-            else if (clientY > rect.bottom - scrollThreshold) {
-                dragState.autoScrollInterval = setInterval(() => {
-                    sentenceList.scrollTop += scrollSpeed;
-                }, 16);
-            }
         }
 
         function handleMove(position, direction) {
