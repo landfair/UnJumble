@@ -1377,8 +1377,8 @@
             
             <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-label">Puzzle</div>
-                    <div class="stat-value" id="puzzleNumber">#1</div>
+                    <div class="stat-label">Date</div>
+                    <div class="stat-value" id="puzzleNumber">Oct 24, 2025</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Attempts</div>
@@ -1741,6 +1741,85 @@
                 ]
             },
             {
+                title: "Taking the SAT Like a Rich Kid",
+                attribution: "From Dylan Hernandez's 'How I Learned to Take the SAT Like a Rich Kid' (The New York Times, April 10, 2017)",
+                sentences: [
+                    "The summer before my junior year of high school, I boarded an airplane for the first time.",
+                    "Three hours later I was in picture-perfect New England, where I was soon to be surrounded by a diverse and extremely accomplished group of peers.",
+                    "I had been awarded a generous scholarship to attend the Phillips Exeter summer semester — five weeks of classes and sports, with some optional SAT prep mixed in.",
+                    "I'm from Flint, Mich., and even though I recently transferred to a private Catholic high school in my city, top tier-education is new to my family.",
+                    "Neither of my parents went to college, and in Rust Belt regions like the middle of Michigan, education is falling behind the rest of the country.",
+                    "Stanford researchers found, for example, that sixth graders in our town are two to three grade levels behind the national average.",
+                    "They are almost five grade levels behind students in more prosperous counties 30 miles away."
+                ]
+            },
+            {
+                title: "Careerism Is Ruining College",
+                attribution: "From Isabella Glassman's 'Careerism Is Ruining College' (The New York Times, September 24, 2024)",
+                sentences: [
+                    "When I pictured myself in college, I envisioned potluck picnics and late nights listening to Taylor Swift, overanalyzing class crushes.",
+                    "Maybe even joining a Quidditch team.",
+                    "I never daydreamed about hiding in the library bathroom, crying because I had just been rejected by an undergraduate law journal.",
+                    "The recently publicized tensions on college campuses, particularly those in the heavily scrutinized Ivy League, are among many forces at play for students today.",
+                    "But there's another that has not yet captivated the news cycle.",
+                    "It's called pre-professional pressure: a prevailing culture that convinces many of us that only careers in fields such as computer programming, finance and consulting, preferably at blue-chip firms like Goldman Sachs, McKinsey or big tech companies, can secure us worthwhile futures.",
+                    "It is an inescapable part of the current college experience, like tailgating or surviving on stale dining hall food.",
+                    "It not only steers our life choices; it also permeates daily life and negatively affects our mental health."
+                ]
+            },
+            {
+                title: "My Liberal Campus Is Pushing Freethinkers to the Right",
+                attribution: "From Adam S. Hoffman's 'My Liberal Campus Is Pushing Freethinkers to the Right' (The New York Times, March 1, 2023)",
+                sentences: [
+                    "In the not-so-distant past, the Typical College Republican idolized Ronald Reagan, fretted about the national debt and read Edmund Burke.",
+                    "Political sophistication, to that person, implied belief in the status quo.",
+                    "For that bygone breed, an education at an elite institution was a moderating finishing school.",
+                    "Even then American universities skewed liberal, but the conservatives of old had real opportunities to make their case — and have their ideas respectfully challenged — in the public square.",
+                    "At my own school, Princeton, I've been told, politics were mostly separable from personal relationships.",
+                    "How things have changed.",
+                    "Today's campus conservatives embrace a less moderate, complacent and institutional approach to politics.",
+                    "Instead of belief in the status quo, many tend toward scorched-earth politics."
+                ]
+            },
+            {
+                title: "I Came to College Eager to Debate",
+                attribution: "From Emma Camp's 'I Came to College Eager to Debate. I Found Self-Censorship Instead.' (The New York Times, March 7, 2022)",
+                sentences: [
+                    "Each week, I seek out the office hours of a philosophy department professor willing to discuss with me complex ethical questions raised by her course on gender and sexuality.",
+                    "We keep our voices low, as if someone might overhear us.",
+                    "Hushed voices and anxious looks dictate so many conversations on campus here at the University of Virginia, where I'm finishing up my senior year.",
+                    "A friend lowers her voice to lament the ostracizing of a student who said something well-meaning but mildly offensive during a student club's diversity training.",
+                    "Another friend shuts his bedroom door when I mention a lecture defending Thomas Jefferson from contemporary criticism.",
+                    "His roommate might hear us, he explains."
+                ]
+            },
+            {
+                title: "Why I Chose a Historically Black College",
+                attribution: "From Skylar Mitchell's 'Why I Chose a Historically Black College' (The New York Times, April 1, 2017)",
+                sentences: [
+                    "\"A black school? But you're so smart, you could go anywhere.\"",
+                    "That was the reaction I got when I told some high school friends that I would attend Spelman, a historically black women's college in Atlanta.",
+                    "I know they thought they were complimenting me.",
+                    "At first, I tried to justify my decision, pointing to the college's notable alumnae and research opportunities.",
+                    "But the fact that Spelman is the nation's top-ranked historically black college was lost on them.",
+                    "I couldn't make my peers understand the experience of a black student in an overwhelmingly white school.",
+                    "I couldn't convey the significance of historically black colleges and universities."
+                ]
+            },
+            {
+                title: "Dropping Out of College Into Life",
+                attribution: "From Rainesford Stauffer's 'Dropping Out of College Into Life' (The New York Times, July 17, 2017)",
+                sentences: [
+                    "\"I never pegged you for a dropout,\" a family friend said when I moved back home to sleepy Owensboro, Ky., after my freshman year of college.",
+                    "In high school I had been a stereotypical overachiever.",
+                    "Because my grades were good, I had little doubt that I'd excel in college.",
+                    "Instead, I did the opposite.",
+                    "I froze.",
+                    "There has been a lot of media coverage about students who fear failure so much that it affects everything from their grades to their mental health, but there seem to be misconceptions about where this fear comes from.",
+                    "It's easy to dismiss young people as \"soft\" or desperate for participation trophies, but fear of failure is far more complex."
+                ]
+            },
+            {
                 title: "Technology Assessment Act",
                 attribution: "From The Technology Assessment Act of 1972",
                 sentences: [
@@ -1829,18 +1908,33 @@
         
         // Get today's puzzle index based on date
         function getTodaysPuzzleIndex() {
-            const startDate = new Date('2025-01-01');
+            const startDate = new Date('2025-10-24T00:00:01');
             const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize to midnight
             const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-            return Math.abs(daysDiff) % puzzles.length;
+            return Math.max(0, Math.min(daysDiff, puzzles.length - 1));
         }
-        
+
+        // Get puzzle date
+        function getPuzzleDate(puzzleIndex) {
+            const startDate = new Date('2025-10-24T00:00:01');
+            const puzzleDate = new Date(startDate);
+            puzzleDate.setDate(startDate.getDate() + puzzleIndex);
+            return puzzleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // Check if puzzle is unlocked
+        function isPuzzleUnlocked(puzzleIndex) {
+            const todayIndex = getTodaysPuzzleIndex();
+            return puzzleIndex <= todayIndex;
+        }
+
         // Initialize game
         function initGame(puzzleIndex = null) {
             currentPuzzleIndex = puzzleIndex !== null ? puzzleIndex : getTodaysPuzzleIndex();
             currentPuzzle = puzzles[currentPuzzleIndex];
-            
-            document.getElementById('puzzleNumber').textContent = `#${currentPuzzleIndex + 1}`;
+
+            document.getElementById('puzzleNumber').textContent = getPuzzleDate(currentPuzzleIndex);
             document.getElementById('puzzleTitle').textContent = currentPuzzle.title;
             
             // Add attribution if it exists
@@ -1980,13 +2074,25 @@
         function showCheatMenu() {
             const puzzleSelector = document.getElementById('puzzleSelector');
             puzzleSelector.innerHTML = '';
-            
+
             puzzles.forEach((puzzle, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'puzzle-btn';
-                btn.textContent = `#${index + 1}`;
-                btn.title = puzzle.title;
+                const puzzleDate = getPuzzleDate(index);
+                const isUnlocked = isPuzzleUnlocked(index);
+
+                btn.textContent = puzzleDate;
+                btn.title = isUnlocked ? puzzle.title : '🔒 Locked - Available ' + puzzleDate;
+
+                if (!isUnlocked) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                    btn.textContent += ' 🔒';
+                }
+
                 btn.onclick = () => {
+                    if (!isUnlocked) return;
                     closeCheatMenu();
                     document.getElementById('welcomeOverlay').style.display = 'none';
                     const gameArea = document.getElementById('gameArea');
@@ -1998,7 +2104,7 @@
                                     <!-- Sentence cards will be generated here -->
                                 </div>
                             </div>
-                            
+
                             <div class="submit-area">
                                 <button class="submit-button" id="submitButton" onclick="submitGuess()">
                                     Submit Answer
@@ -2470,28 +2576,74 @@
             return a.length === b.length && a.every((val, index) => val === b[index]);
         }
         
+        // Timer pause/resume variables
+        let isPaused = false;
+        let pausedTime = 0;
+        let totalPausedTime = 0;
+
         function startTimer() {
-            startTime = Date.now();
+            startTime = Date.now() - totalPausedTime;
+            isPaused = false;
             timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Update immediately
         }
-        
+
         function stopTimer() {
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
             }
         }
-        
+
+        function pauseTimer() {
+            if (!isPaused && gameStarted && !isGameComplete) {
+                isPaused = true;
+                pausedTime = Date.now();
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            }
+        }
+
+        function resumeTimer() {
+            if (isPaused && gameStarted && !isGameComplete) {
+                isPaused = false;
+                totalPausedTime += Date.now() - pausedTime;
+                startTime = Date.now() - (Date.now() - startTime - totalPausedTime);
+                timerInterval = setInterval(updateTimer, 1000);
+                updateTimer();
+            }
+        }
+
         function updateTimer() {
-            if (!startTime || isGameComplete) return;
-            
+            if (!startTime || isGameComplete || isPaused) return;
+
             const elapsed = Date.now() - startTime;
             const minutes = Math.floor(elapsed / 60000);
             const seconds = Math.floor((elapsed % 60000) / 1000);
-            
-            document.getElementById('timer').textContent = 
+
+            document.getElementById('timer').textContent =
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
+
+        // Pause timer when user leaves the page, resume when they return
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                pauseTimer();
+            } else {
+                resumeTimer();
+            }
+        });
+
+        // Also handle window blur/focus events for additional coverage
+        window.addEventListener('blur', function() {
+            pauseTimer();
+        });
+
+        window.addEventListener('focus', function() {
+            resumeTimer();
+        });
         
         function getShareText() {
             const time = document.getElementById('finalTime').textContent;
