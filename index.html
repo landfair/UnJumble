@@ -327,14 +327,39 @@
             padding: 20px 24px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             display: flex;
             align-items: center;
             gap: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            /* Mobile performance optimizations */
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            cursor: grab;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        
-        .sentence-card:hover {
+
+        .sentence-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05) rotate(2deg);
+            border-color: #667eea;
+        }
+
+        .sentence-card.drag-over {
+            border-color: #10b981;
+            border-style: dashed;
+            background: linear-gradient(135deg, #ecfdf5 0%, white 100%);
+            transform: translateY(-4px);
+        }
+
+        .sentence-card:hover:not(.dragging) {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
             border-color: #667eea;
@@ -384,12 +409,45 @@
             color: #374151;
             font-weight: 500;
         }
-        
-        .sentence-controls {
+
+        .drag-handle {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            align-items: center;
+            gap: 3px;
+            padding: 8px;
+            cursor: grab;
+            opacity: 0.4;
+            transition: opacity 0.2s ease;
+            touch-action: none;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .sentence-card:hover .drag-handle {
+            opacity: 0.7;
+        }
+
+        .drag-handle-dot {
+            width: 4px;
+            height: 4px;
+            background: #94a3b8;
+            border-radius: 50%;
+        }
+
+        body.ios .drag-handle {
+            padding: 12px;
+            gap: 4px;
+        }
+
+        body.ios .drag-handle-dot {
+            width: 5px;
+            height: 5px;
+        }
+
+        .sentence-controls {
+            display: none; /* Hide old button controls */
         }
         
         .control-button {
@@ -405,7 +463,7 @@
             line-height: 36px;
             font-size: 14px;
             font-weight: 600;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease-out;
             position: relative;
             overflow: hidden;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -413,9 +471,15 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            appearance: none;
             -webkit-appearance: none;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            /* Mobile performance optimizations */
+            will-change: transform, opacity;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         
         /* iOS-specific button styles */
@@ -1093,7 +1157,7 @@
         <div class="game-card">
             <div class="header">
                 <div class="header-content">
-                    <img src="https://i.imgur.com/iIODsNl.png" alt="NYU Logo" class="nyu-logo">
+                    <img src="https://i.imgur.com/OoiuRmJ.png" alt="NYU Logo" class="nyu-logo">
                     <div class="header-text">
                         <div class="logo">UnJumble</div>
                         <div class="subtitle">Return sentences to their original order</div>
@@ -1145,28 +1209,24 @@
                 <h3>🎯 How to Play</h3>
                 <ul class="instruction-list">
                     <li class="instruction-item desktop-instruction">
-                        <span class="instruction-icon">⬆️</span>
-                        <span>Single click green arrows to move sentences up one position</span>
+                        <span class="instruction-icon">🖱️</span>
+                        <span>Click and drag sentences to reorder them</span>
                     </li>
                     <li class="instruction-item ios-instruction">
-                        <span class="instruction-icon">⬆️</span>
-                        <span>Tap green arrows to move sentences up one position</span>
+                        <span class="instruction-icon">👆</span>
+                        <span>Touch and drag sentences to reorder them</span>
                     </li>
                     <li class="instruction-item desktop-instruction">
-                        <span class="instruction-icon">⬇️</span>
-                        <span>Single click orange arrows to move sentences down one position</span>
+                        <span class="instruction-icon">↕️</span>
+                        <span>Drag sentences to any position in the list</span>
                     </li>
                     <li class="instruction-item ios-instruction">
-                        <span class="instruction-icon">⬇️</span>
-                        <span>Tap orange arrows to move sentences down one position</span>
+                        <span class="instruction-icon">↕️</span>
+                        <span>Swipe sentences up or down to move them</span>
                     </li>
-                    <li class="instruction-item desktop-instruction">
-                        <span class="instruction-icon">⚡</span>
-                        <span>Double click arrows to jump to the top or bottom instantly</span>
-                    </li>
-                    <li class="instruction-item ios-instruction">
-                        <span class="instruction-icon">⚡</span>
-                        <span>Hold arrows for half a second to jump to top or bottom</span>
+                    <li class="instruction-item">
+                        <span class="instruction-icon">✨</span>
+                        <span>Look for the grip handle (⋮⋮) on each card</span>
                     </li>
                     <li class="instruction-item">
                         <span class="instruction-icon">✅</span>
@@ -1178,9 +1238,9 @@
                     </li>
                 </ul>
             </div>
-            
+
             <div class="welcome-tips">
-                💡 Tip: Look for logical flow and connecting words between sentences!
+                💡 Tip: Drag sentences into order - look for logical flow and connecting words!
             </div>
             
             <button class="welcome-ready-btn" onclick="startGame()">
@@ -1525,7 +1585,11 @@
         
         // Click timing for double-click detection
         let clickTimers = {};
-        
+
+        // Mobile optimization: debounce rapid moves
+        let isMoving = false;
+        let moveQueue = [];
+
         // Particle system
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
@@ -1765,120 +1829,265 @@
         function createSentenceCards() {
             const sentenceList = document.getElementById('sentenceList');
             sentenceList.innerHTML = '';
-            
+
             currentOrder.forEach((sentenceIndex, position) => {
                 const card = document.createElement('div');
                 card.className = 'sentence-card';
                 card.dataset.originalIndex = sentenceIndex;
                 card.dataset.currentPosition = position;
-                
-                const isFirst = position === 0;
-                const isLast = position === currentOrder.length - 1;
-                
+                card.draggable = false; // We'll handle drag manually for better mobile support
+
                 card.innerHTML = `
-                    <div class="sentence-text">${currentPuzzle.sentences[sentenceIndex]}</div>
-                    <div class="sentence-controls">
-                        <input type="button" class="control-button up-btn" ${isFirst ? 'disabled' : ''} 
-                                data-position="${position}" data-direction="up" value="↑">
-                        <input type="button" class="control-button down-btn" ${isLast ? 'disabled' : ''} 
-                                data-position="${position}" data-direction="down" value="↓">
+                    <div class="drag-handle" aria-label="Drag to reorder">
+                        <div class="drag-handle-dot"></div>
+                        <div class="drag-handle-dot"></div>
+                        <div class="drag-handle-dot"></div>
+                        <div class="drag-handle-dot"></div>
+                        <div class="drag-handle-dot"></div>
+                        <div class="drag-handle-dot"></div>
                     </div>
+                    <div class="sentence-text">${currentPuzzle.sentences[sentenceIndex]}</div>
                 `;
-                
-                // Add event listeners for buttons
-                const upBtn = card.querySelector('.up-btn');
-                const downBtn = card.querySelector('.down-btn');
-                
-                if (upBtn && !isFirst) {
-    if (detectiOS()) {
-        let touchTimer = null;
-        let touchStartTime = 0;
 
-        upBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            touchStartTime = Date.now();
-            touchTimer = setTimeout(() => {
-                performJumpMove(position, 'up');
-                touchTimer = null;
-            }, 400);
-        });
+                // Add drag and drop event listeners
+                setupDragAndDrop(card);
 
-        upBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            if (touchTimer) {
-                clearTimeout(touchTimer);
-                touchTimer = null;
-                if (Date.now() - touchStartTime < 400) {
-                    handleMove(position, 'up');
-                }
-            }
-        });
-    } else {
-        upBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleMove(position, 'up');
-        });
-        upBtn.addEventListener('dblclick', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            performJumpMove(position, 'up');
-        });
-    }
-}
-
-if (downBtn && !isLast) {
-    if (detectiOS()) {
-        let touchTimer = null;
-        let touchStartTime = 0;
-
-        downBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            touchStartTime = Date.now();
-            touchTimer = setTimeout(() => {
-                performJumpMove(position, 'down');
-                touchTimer = null;
-            }, 400);
-        });
-
-        downBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            if (touchTimer) {
-                clearTimeout(touchTimer);
-                touchTimer = null;
-                if (Date.now() - touchStartTime < 400) {
-                    handleMove(position, 'down');
-                }
-            }
-        });
-    } else {
-        downBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleMove(position, 'down');
-        });
-        downBtn.addEventListener('dblclick', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            performJumpMove(position, 'down');
-        });
-    }
-}
-
-
-sentenceList.appendChild(card);
+                sentenceList.appendChild(card);
             });
         }
-        
+
+        // Drag and Drop functionality
+        let dragState = {
+            isDragging: false,
+            draggedCard: null,
+            draggedIndex: null,
+            startY: 0,
+            currentY: 0,
+            offsetY: 0,
+            placeholder: null,
+            autoScrollInterval: null
+        };
+
+        function setupDragAndDrop(card) {
+            // Use touchstart for mobile, mousedown for desktop
+            card.addEventListener('touchstart', handleDragStart, { passive: false });
+            card.addEventListener('mousedown', handleDragStart);
+        }
+
+        function handleDragStart(e) {
+            if (isGameComplete) return;
+
+            // Only allow dragging from the card itself or drag handle
+            const target = e.target;
+            if (!target.closest('.sentence-card')) return;
+
+            const card = target.closest('.sentence-card');
+            const isTouchEvent = e.type === 'touchstart';
+
+            // Start timer if not started
+            if (!gameStarted) {
+                gameStarted = true;
+                startTimer();
+            }
+
+            // Haptic feedback on pickup
+            if (navigator.vibrate) {
+                navigator.vibrate(15);
+            }
+
+            dragState.isDragging = true;
+            dragState.draggedCard = card;
+            dragState.draggedIndex = parseInt(card.dataset.currentPosition);
+
+            const touch = isTouchEvent ? e.touches[0] : e;
+            const rect = card.getBoundingClientRect();
+
+            dragState.startY = touch.clientY;
+            dragState.offsetY = touch.clientY - rect.top;
+
+            // Add dragging class
+            card.classList.add('dragging');
+
+            // Add event listeners for move and end
+            if (isTouchEvent) {
+                document.addEventListener('touchmove', handleDragMove, { passive: false });
+                document.addEventListener('touchend', handleDragEnd);
+                document.addEventListener('touchcancel', handleDragEnd);
+            } else {
+                document.addEventListener('mousemove', handleDragMove);
+                document.addEventListener('mouseup', handleDragEnd);
+            }
+
+            e.preventDefault();
+        }
+
+        function handleDragMove(e) {
+            if (!dragState.isDragging) return;
+
+            const isTouchEvent = e.type === 'touchmove';
+            const touch = isTouchEvent ? e.touches[0] : e;
+
+            dragState.currentY = touch.clientY;
+
+            // Find the card we're hovering over
+            const sentenceCards = Array.from(document.querySelectorAll('.sentence-card:not(.dragging)'));
+            let hoveredCard = null;
+            let insertBefore = false;
+
+            for (const otherCard of sentenceCards) {
+                const rect = otherCard.getBoundingClientRect();
+                const midpoint = rect.top + rect.height / 2;
+
+                if (touch.clientY < midpoint && touch.clientY > rect.top) {
+                    hoveredCard = otherCard;
+                    insertBefore = true;
+                    break;
+                } else if (touch.clientY > midpoint && touch.clientY < rect.bottom) {
+                    hoveredCard = otherCard;
+                    insertBefore = false;
+                    break;
+                }
+            }
+
+            // Remove all drag-over classes
+            sentenceCards.forEach(c => c.classList.remove('drag-over'));
+
+            // Add drag-over class to hovered card
+            if (hoveredCard) {
+                hoveredCard.classList.add('drag-over');
+            }
+
+            // Auto-scroll when near edges
+            handleAutoScroll(touch.clientY);
+
+            e.preventDefault();
+        }
+
+        function handleDragEnd(e) {
+            if (!dragState.isDragging) return;
+
+            const isTouchEvent = e.type === 'touchend' || e.type === 'touchcancel';
+
+            // Stop auto-scroll
+            if (dragState.autoScrollInterval) {
+                clearInterval(dragState.autoScrollInterval);
+                dragState.autoScrollInterval = null;
+            }
+
+            // Find drop position
+            const sentenceCards = Array.from(document.querySelectorAll('.sentence-card:not(.dragging)'));
+            const touch = isTouchEvent ? e.changedTouches[0] : e;
+            let newIndex = dragState.draggedIndex;
+
+            for (let i = 0; i < sentenceCards.length; i++) {
+                const rect = sentenceCards[i].getBoundingClientRect();
+                const midpoint = rect.top + rect.height / 2;
+
+                if (touch.clientY < midpoint) {
+                    newIndex = parseInt(sentenceCards[i].dataset.currentPosition);
+                    break;
+                } else if (i === sentenceCards.length - 1) {
+                    newIndex = parseInt(sentenceCards[i].dataset.currentPosition) + 1;
+                }
+            }
+
+            // Adjust index if dragging down
+            if (newIndex > dragState.draggedIndex) {
+                newIndex--;
+            }
+
+            // Perform the move if position changed
+            if (newIndex !== dragState.draggedIndex) {
+                // Haptic feedback on drop
+                if (navigator.vibrate) {
+                    navigator.vibrate([10, 5, 10]);
+                }
+
+                // Update the order
+                const movedItem = currentOrder.splice(dragState.draggedIndex, 1)[0];
+                currentOrder.splice(newIndex, 0, movedItem);
+
+                // Recreate cards with animation
+                animateAndRecreate(newIndex);
+            } else {
+                // Just remove dragging class if no move
+                dragState.draggedCard.classList.remove('dragging');
+            }
+
+            // Clean up drag-over classes
+            sentenceCards.forEach(c => c.classList.remove('drag-over'));
+
+            // Remove event listeners
+            if (isTouchEvent) {
+                document.removeEventListener('touchmove', handleDragMove);
+                document.removeEventListener('touchend', handleDragEnd);
+                document.removeEventListener('touchcancel', handleDragEnd);
+            } else {
+                document.removeEventListener('mousemove', handleDragMove);
+                document.removeEventListener('mouseup', handleDragEnd);
+            }
+
+            // Reset drag state
+            dragState.isDragging = false;
+            dragState.draggedCard = null;
+            dragState.draggedIndex = null;
+
+            e.preventDefault();
+        }
+
+        function handleAutoScroll(clientY) {
+            const scrollThreshold = 100;
+            const scrollSpeed = 5;
+            const sentenceList = document.getElementById('sentenceList');
+
+            if (!sentenceList) return;
+
+            const rect = sentenceList.getBoundingClientRect();
+
+            // Clear existing interval
+            if (dragState.autoScrollInterval) {
+                clearInterval(dragState.autoScrollInterval);
+                dragState.autoScrollInterval = null;
+            }
+
+            // Scroll up
+            if (clientY < rect.top + scrollThreshold) {
+                dragState.autoScrollInterval = setInterval(() => {
+                    sentenceList.scrollTop -= scrollSpeed;
+                }, 16);
+            }
+            // Scroll down
+            else if (clientY > rect.bottom - scrollThreshold) {
+                dragState.autoScrollInterval = setInterval(() => {
+                    sentenceList.scrollTop += scrollSpeed;
+                }, 16);
+            }
+        }
+
         function handleMove(position, direction) {
             if (isGameComplete) return;
-            
+
+            // Debounce rapid moves on mobile for better performance
+            if (isMoving) {
+                return;
+            }
+
             // Start timer if it hasn't been started yet
             if (!gameStarted) {
                 gameStarted = true;
                 startTimer();
             }
-            
+
+            // Set moving flag
+            isMoving = true;
+
             // Perform single move for click events
             performSingleMove(position, direction);
+
+            // Reset moving flag after animation completes
+            setTimeout(() => {
+                isMoving = false;
+            }, 200); // Reduced from animation time for better responsiveness
         }
         
         function performSingleMove(position, direction) {
@@ -1921,26 +2130,46 @@ sentenceList.appendChild(card);
         }
         
         function animateAndRecreate(movedToPosition) {
-            // Recreate cards
-            createSentenceCards();
-            
-            // Animate the moved card
-            setTimeout(() => {
-                const cards = document.querySelectorAll('.sentence-card');
-                if (cards[movedToPosition]) {
-                    cards[movedToPosition].classList.add('recently-moved');
-                    cards[movedToPosition].scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'nearest' 
-                    });
-                    
-                    setTimeout(() => {
-                        if (cards[movedToPosition]) {
-                            cards[movedToPosition].classList.remove('recently-moved');
+            // Use requestAnimationFrame for smoother rendering on mobile
+            requestAnimationFrame(() => {
+                // Recreate cards
+                createSentenceCards();
+
+                // Animate the moved card using RAF for optimal performance
+                requestAnimationFrame(() => {
+                    const cards = document.querySelectorAll('.sentence-card');
+                    if (cards[movedToPosition]) {
+                        // Add animation class
+                        cards[movedToPosition].classList.add('recently-moved');
+
+                        // Scroll into view with optimized settings for mobile
+                        const scrollOptions = {
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'nearest'
+                        };
+
+                        // Use intersection observer for better mobile scrolling performance
+                        if ('IntersectionObserver' in window) {
+                            const rect = cards[movedToPosition].getBoundingClientRect();
+                            const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+                            if (!isVisible) {
+                                cards[movedToPosition].scrollIntoView(scrollOptions);
+                            }
+                        } else {
+                            cards[movedToPosition].scrollIntoView(scrollOptions);
                         }
-                    }, 1200);
-                }
-            }, 50);
+
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            if (cards[movedToPosition]) {
+                                cards[movedToPosition].classList.remove('recently-moved');
+                            }
+                        }, 1200);
+                    }
+                });
+            });
         }
         
         function updateAttemptsDisplay() {
