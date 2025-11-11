@@ -407,6 +407,18 @@
             border-color: #10b981;
             background: linear-gradient(135deg, #ecfdf5 0%, white 100%);
         }
+
+        .sentence-card.locked {
+            border-color: #059669;
+            background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+        }
+
+        .sentence-card.locked .sentence-text::before {
+            content: '🔒 ';
+            font-size: 0.875rem;
+            margin-right: 6px;
+        }
         
         .sentence-text {
             flex: 1;
@@ -490,6 +502,12 @@
 
         .control-button:disabled svg {
             color: #a78bfa;
+        }
+
+        /* Locked card button styling */
+        .sentence-card.locked .control-button:disabled svg {
+            color: #10b981;
+            opacity: 0.4;
         }
 
         .up-btn {
@@ -2429,24 +2447,31 @@
                 card.dataset.originalIndex = sentenceIndex;
                 card.dataset.currentPosition = position;
 
+                // Check if this position is locked (confirmed as correct)
+                const isLocked = correctPositionsFeedback.has(position);
+
                 // Apply correct class if this position has been confirmed as correct
-                if (correctPositionsFeedback.has(position)) {
-                    card.classList.add('correct');
+                if (isLocked) {
+                    card.classList.add('correct', 'locked');
                 }
 
                 const isFirst = position === 0;
                 const isLast = position === currentOrder.length - 1;
 
+                // Disable buttons if locked OR at boundary
+                const upDisabled = isLocked || isFirst;
+                const downDisabled = isLocked || isLast;
+
                 card.innerHTML = `
                     <div class="sentence-text">${currentPuzzle.sentences[sentenceIndex]}</div>
                     <div class="sentence-controls">
-                        <button class="control-button up-btn" ${isFirst ? 'disabled' : ''}
+                        <button class="control-button up-btn" ${upDisabled ? 'disabled' : ''}
                                 data-position="${position}" aria-label="Move up">
                             <svg viewBox="0 0 24 24" width="32" height="32">
                                 <path d="M7 14l5-5 5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             </svg>
                         </button>
-                        <button class="control-button down-btn" ${isLast ? 'disabled' : ''}
+                        <button class="control-button down-btn" ${downDisabled ? 'disabled' : ''}
                                 data-position="${position}" aria-label="Move down">
                             <svg viewBox="0 0 24 24" width="32" height="32">
                                 <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -2481,6 +2506,11 @@
         function handleMove(position, direction) {
             if (isGameComplete) return;
 
+            // Prevent moves from locked positions
+            if (correctPositionsFeedback.has(position)) {
+                return;
+            }
+
             // Debounce rapid moves on mobile for better performance
             if (isMoving) {
                 return;
@@ -2509,39 +2539,58 @@
         
         function performSingleMove(position, direction) {
             let newPosition;
-            
+
             if (direction === 'up') {
                 newPosition = Math.max(0, position - 1);
             } else if (direction === 'down') {
                 newPosition = Math.min(currentOrder.length - 1, position + 1);
             }
-            
+
             if (newPosition !== position) {
+                // Prevent moves that would affect locked positions
+                if (correctPositionsFeedback.has(position) || correctPositionsFeedback.has(newPosition)) {
+                    return; // Don't allow moving to or from locked positions
+                }
+
                 // Swap items
                 const temp = currentOrder[position];
                 currentOrder[position] = currentOrder[newPosition];
                 currentOrder[newPosition] = temp;
-                
+
                 animateAndRecreate(newPosition);
             }
         }
         
         function performJumpMove(position, direction) {
             let newPosition;
-            
+
             if (direction === 'up' || direction === 'top') {
                 newPosition = 0;
             } else if (direction === 'down' || direction === 'bottom') {
                 newPosition = currentOrder.length - 1;
             }
-            
+
             if (newPosition !== position) {
+                // Prevent moves from locked positions
+                if (correctPositionsFeedback.has(position)) {
+                    return; // Don't allow moving locked positions
+                }
+
+                // Prevent moves that would affect any locked positions in between
+                const start = Math.min(position, newPosition);
+                const end = Math.max(position, newPosition);
+                for (let i = start; i <= end; i++) {
+                    if (correctPositionsFeedback.has(i)) {
+                        return; // Don't allow moves that would shift locked positions
+                    }
+                }
+
                 // Remove item from current position
                 const movedItem = currentOrder.splice(position, 1)[0];
-                
+
                 // Insert at new position
                 currentOrder.splice(newPosition, 0, movedItem);
-                
+
                 animateAndRecreate(newPosition);
             }
         }
