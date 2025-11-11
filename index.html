@@ -425,21 +425,16 @@
         }
         
         .control-button {
-            color: white !important;
-            border: none !important;
-            border-radius: 12px;
+            background: none;
+            border: none;
+            padding: 0;
             width: 48px;
             height: 48px;
-            cursor: pointer !important;
-            display: flex !important;
+            cursor: pointer;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(87, 6, 140, 0.2);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -455,24 +450,21 @@
             -webkit-backface-visibility: hidden;
         }
 
-        .control-button::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .control-button:hover::before {
-            opacity: 1;
+        .control-button svg {
+            width: 40px;
+            height: 40px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* iOS-specific button styles */
         body.ios .control-button {
             width: 52px;
             height: 52px;
-            font-size: 22px;
+        }
+
+        body.ios .control-button svg {
+            width: 44px;
+            height: 44px;
         }
 
         body.ios .sentence-controls {
@@ -480,39 +472,40 @@
         }
 
         .control-button:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.05) !important;
-            box-shadow: 0 8px 20px rgba(87, 6, 140, 0.3) !important;
-            cursor: pointer !important;
+            transform: scale(1.15);
+        }
+
+        .control-button:hover:not(:disabled) svg {
+            filter: drop-shadow(0 2px 4px rgba(87, 6, 140, 0.3));
         }
 
         .control-button:active:not(:disabled) {
-            transform: translateY(-1px) scale(0.98) !important;
-            box-shadow: 0 4px 12px rgba(87, 6, 140, 0.2) !important;
+            transform: scale(0.95);
         }
 
         .control-button:disabled {
-            background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%) !important;
-            color: #a78bfa !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-            box-shadow: none !important;
-            opacity: 0.4;
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        .control-button:disabled svg {
+            color: #a78bfa;
         }
 
         .up-btn {
-            background: linear-gradient(135deg, #57068c 0%, #6d1ba8 100%) !important;
+            color: #57068c;
         }
 
         .up-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #6d1ba8 0%, #7c22bb 100%) !important;
+            color: #6d1ba8;
         }
 
         .down-btn {
-            background: linear-gradient(135deg, #8b2fc4 0%, #9f3dd6 100%) !important;
+            color: #8b2fc4;
         }
 
         .down-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #9f3dd6 0%, #b14ce8 100%) !important;
+            color: #9f3dd6;
         }
         
         .submit-area {
@@ -666,6 +659,9 @@
             z-index: 3000;
             max-width: 400px;
             width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -681,13 +677,17 @@
             color: #1f2937;
             font-size: 1.5rem;
             font-weight: 700;
+            flex-shrink: 0;
         }
-        
+
         .puzzle-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 12px;
             margin-bottom: 24px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 8px;
         }
         
         .puzzle-btn {
@@ -695,11 +695,28 @@
             color: white;
             border: none;
             border-radius: 12px;
-            padding: 16px;
+            padding: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-height: 80px;
+        }
+
+        .puzzle-btn-number {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .puzzle-btn-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.3;
         }
         
         .puzzle-btn:hover {
@@ -717,6 +734,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
+            flex-shrink: 0;
         }
         
         .cheat-close:hover {
@@ -858,6 +876,82 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
         }
+
+        .view-passage-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .view-passage-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .passage-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 5000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .passage-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .passage-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .passage-title {
+            font-size: 1.75rem;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .passage-attribution {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 24px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .passage-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #374151;
+            text-align: left;
+        }
+
+        .passage-sentence {
+            margin-bottom: 16px;
+        }
         
         .completed-message {
             text-align: center;
@@ -906,10 +1000,10 @@
         .welcome-modal {
             background: white;
             border-radius: 24px;
-            padding: 40px 32px;
+            padding: 32px 28px;
             max-width: 500px;
             width: 90%;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
             transform: scale(0.9);
@@ -922,11 +1016,11 @@
         }
         
         .welcome-title {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 900;
             color: #1f2937;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             background: linear-gradient(135deg, #57068c 0%, #8b2fc4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -941,23 +1035,23 @@
         .welcome-subtitle {
             text-align: center;
             color: #6b7280;
-            font-size: 1.125rem;
-            margin-bottom: 32px;
+            font-size: 1rem;
+            margin-bottom: 24px;
             font-weight: 500;
         }
         
         .welcome-instructions {
             background: #f9fafb;
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         
         .welcome-instructions h3 {
             color: #374151;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -972,15 +1066,21 @@
         .instruction-item {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
             color: #4b5563;
-            line-height: 1.6;
+            line-height: 1.5;
+            font-size: 0.9375rem;
+        }
+
+        .instruction-item:last-child {
+            margin-bottom: 0;
         }
         
         .instruction-icon {
-            font-size: 1.25rem;
-            margin-top: 2px;
+            font-size: 1.125rem;
+            margin-top: 1px;
+            flex-shrink: 0;
         }
         
         .ios-instruction {
@@ -998,13 +1098,14 @@
         .welcome-tips {
             background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
             border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 32px;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
             text-align: center;
             color: #6d28d9;
             font-weight: 600;
             letter-spacing: 0.01em;
+            font-size: 0.9375rem;
         }
         
         .welcome-ready-btn {
@@ -1012,9 +1113,9 @@
             background: linear-gradient(135deg, #57068c 0%, #6d1ba8 100%);
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 20px 32px;
-            font-size: 1.25rem;
+            border-radius: 16px;
+            padding: 16px 28px;
+            font-size: 1.125rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1152,50 +1253,76 @@
                 gap: 10px;
             }
 
+            .passage-content {
+                padding: 28px 24px;
+                max-height: 90vh;
+            }
+
+            .passage-title {
+                font-size: 1.5rem;
+            }
+
+            .passage-text {
+                font-size: 1rem;
+            }
+
+            .view-passage-btn {
+                width: 100%;
+                padding: 14px 20px;
+            }
+
             .share-btn {
                 padding: 12px;
                 font-size: 0.8125rem;
             }
 
             .welcome-modal {
-                padding: 32px 24px;
-                max-height: 90vh;
+                padding: 24px 20px;
+                max-height: 92vh;
                 width: 92%;
             }
 
             .welcome-title {
-                font-size: 2rem;
+                font-size: 1.75rem;
+                margin-bottom: 8px;
             }
 
             .welcome-subtitle {
-                font-size: 1rem;
-                margin-bottom: 24px;
+                font-size: 0.9375rem;
+                margin-bottom: 16px;
             }
 
             .welcome-instructions {
-                padding: 20px;
-                margin-bottom: 20px;
+                padding: 16px;
+                margin-bottom: 16px;
             }
 
             .welcome-instructions h3 {
-                font-size: 1.125rem;
-            }
-
-            .instruction-item {
-                font-size: 0.9375rem;
+                font-size: 1rem;
                 margin-bottom: 10px;
             }
 
+            .instruction-item {
+                font-size: 0.875rem;
+                margin-bottom: 8px;
+                gap: 8px;
+                line-height: 1.4;
+            }
+
+            .instruction-icon {
+                font-size: 1rem;
+            }
+
             .welcome-tips {
-                font-size: 0.9375rem;
-                padding: 16px;
-                margin-bottom: 24px;
+                font-size: 0.875rem;
+                padding: 12px;
+                margin-bottom: 16px;
             }
 
             .welcome-ready-btn {
-                font-size: 1.125rem;
-                padding: 18px 28px;
-                min-height: 54px;
+                font-size: 1rem;
+                padding: 14px 24px;
+                min-height: 48px;
             }
 
             .control-button {
@@ -1381,8 +1508,8 @@
                     <div class="stat-value" id="puzzleNumber">Oct 24, 2025</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Attempts</div>
-                    <div class="stat-value" id="attemptsRemaining">5/5</div>
+                    <div class="stat-label">Attempts Remaining</div>
+                    <div class="stat-value" id="attemptsRemaining">5</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Timer</div>
@@ -1492,10 +1619,11 @@
                 </button>
             </div>
             
+            <button class="view-passage-btn" onclick="showFullPassage()">📖 View Full Passage</button>
             <button class="close-btn" id="gameOverCloseBtn">Continue</button>
         </div>
     </div>
-    
+
     <!-- Victory Modal -->
     <div class="victory-modal" id="victoryModal">
         <div class="victory-content">
@@ -1523,11 +1651,22 @@
                     📋 Copy
                 </button>
             </div>
-            
+
+            <button class="view-passage-btn" onclick="showFullPassage()">📖 View Full Passage</button>
             <button class="close-btn" onclick="closeVictoryModal()">Continue</button>
         </div>
     </div>
-    
+
+    <!-- Passage View Modal -->
+    <div class="passage-modal" id="passageModal" onclick="closePassageModal()">
+        <div class="passage-content" onclick="event.stopPropagation()">
+            <h2 class="passage-title" id="passageTitle"></h2>
+            <p class="passage-attribution" id="passageAttribution"></p>
+            <div class="passage-text" id="passageText"></div>
+            <button class="close-btn" onclick="closePassageModal()" style="width: 100%; margin-top: 24px;">Close</button>
+        </div>
+    </div>
+
     <script>
         // iOS Detection and Optimization
         function detectiOS() {
@@ -1843,6 +1982,81 @@
                     "Another involved solving novel problems like completing a pattern.",
                     "Students performed worst on both tests when phones were on desks, next worse when they were placed in bags or pockets and best when they were stored in another room.",
                 ]
+            },
+            {
+                title: "Facebook of the Dead",
+                attribution: "From Alexander Landfair's 'Facebook of the Dead' (The Missouri Review, 2013)",
+                sentences: [
+                    "Speaking to us from Beyond the Pleasure Principle, Freud tells us that death isn't just the end of life but a force that gives life its shape and texture.",
+                    "Support for this argument can be found all around us.",
+                    "Take the cemeteries in the centers of Paris, London, New York and Rome, for example, each an emblem of the way cultures grow out of shared responses to death.",
+                    "To look back in time in search of the earliest evidence of human culture, you would have to look beyond the earliest pottery, made in southern China, and past the cave paintings at Lascaux to the first burial sites, in modern-day Israel, where the dead were tucked into the earth in a fetal position, exiting the world just as they'd entered.",
+                    "When applied to the world online, however, Freud's argument seems to miss.",
+                    "Internet culture is the one exception—that is, the richest and most expansive culture in history is the only culture not founded by death."
+                ]
+            },
+            {
+                title: "You and the Atom Bomb",
+                attribution: "From George Orwell's 'You and the Atom Bomb' (Tribune, 1945)",
+                sentences: [
+                    "Considering how likely we all are to be blown to pieces by it within the next five years, the atomic bomb has not roused so much discussion as might have been expected.",
+                    "The newspapers have published numerous diagrams, not very helpful to the average man, of protons and neutrons doing their stuff, and there has been much reiteration of the useless statement that the bomb \"ought to be put under international control.\"",
+                    "But curiously little has been said, at any rate in print, about the question that is of most urgent interest to all of us, namely: \"How difficult are these things to manufacture?\"",
+                    "Such information as we – that is, the big public – possess on this subject has come to us in a rather indirect way, apropos of President Truman's decision not to hand over certain secrets to the USSR.",
+                    "Some months ago, when the bomb was still only a rumour, there was a widespread belief that splitting the atom was merely a problem for the physicists, and that when they had solved it a new and devastating weapon would be within reach of almost everybody.",
+                    "(At any moment, so the rumour went, some lonely lunatic in a laboratory might blow civilisation to smithereens, as easily as touching off a firework.)",
+                    "Had that been true, the whole trend of history would have been abruptly altered.",
+                    "The distinction between great states and small states would have been wiped out, and the power of the State over the individual would have been greatly weakened."
+                ]
+            },
+            {
+                title: "Machine Politics",
+                attribution: "From Fred Turner's 'Machine Politics: The Rise of the Internet and a New Age of Authoritarianism' (Harper's Magazine, 2019)",
+                sentences: [
+                    "\"The Goliath of totalitarianism will be brought down by the David of the microchip,\" Ronald Reagan said in 1989.",
+                    "He was speaking to a thousand British notables in London's historic Guildhall, several months before the fall of the Berlin Wall.",
+                    "Reagan proclaimed that the world was on the precipice of \"a new era in human history,\" one that would bring \"peace and freedom for all.\"",
+                    "Communism was crumbling, just as fascism had before it.",
+                    "Liberal democracies would soon encircle the globe, thanks to the innovations of Silicon Valley.",
+                    "\"I believe,\" he said, \"that more than armies, more than diplomacy, more than the best intentions of democratic nations, the communications revolution will be the greatest force for the advancement of human freedom the world has ever seen.\"",
+                    "At the time, most everyone thought Reagan was right."
+                ]
+            },
+            {
+                title: "The Worst Mistake in the History of the Human Race",
+                attribution: "From Jared Diamond's 'The Worst Mistake in the History of the Human Race' (Discover Magazine, 1987)",
+                sentences: [
+                    "To science we owe dramatic changes in our smug self-image.",
+                    "Astronomy taught us that our earth isn't the center of the universe but merely one of billions of heavenly bodies.",
+                    "From biology we learned that we weren't specially created by God but evolved along with millions of other species.",
+                    "Now archaeology is demolishing another sacred belief: that human history over the past million years has been a long tale of progress.",
+                    "In particular, recent discoveries suggest that the adoption of agriculture, supposedly our most decisive step toward a better life, was in many ways a catastrophe from which we have never recovered.",
+                    "With agriculture came the gross social and sexual inequality, the disease and despotism, that curse our existence."
+                ]
+            },
+            {
+                title: "The Liar's Dividend",
+                attribution: "From Kelly McBride's 'The \"Liar's Dividend\" Is Dangerous for Journalists. Here's How to Fight It.' (Poynter, 2019)",
+                sentences: [
+                    "As editors and reporters for many of the world's leading news organizations sat in a room last week at Columbia University talking about the \"Information Wars,\" Yasmin Green, the director of research at Jigsaw, a Google subsidiary focused on digital threats, introduced the unsettling concept of the \"Liar's Dividend.\"",
+                    "Here's the concept in a nutshell: Debunking fake or manipulated material like videos, audios or documents, ultimately could stoke belief in the fakery.",
+                    "As a result, even after the fake is exposed, it will be harder for the public to trust any information on that particular topic.",
+                    "This is a bigger problem than the Oxygen Theory, which argues that by debunking a falsehood, journalists give the claim a longer life.",
+                    "The Liar's Dividend suggests that in addition to fueling the flames of falsehoods, the debunking efforts actually legitimize the debate over the veracity.",
+                    "This creates smoke and fans suspicions among at least some in the audience that there might well be something true about the claim.",
+                    "That's the \"dividend\" paid to the perpetrator of the lie."
+                ]
+            },
+            {
+                title: "You Are Not a Gadget",
+                attribution: "From Jaron Lanier's 'You Are Not a Gadget' (2010)",
+                sentences: [
+                    "When I work with experimental digital gadgets, like new variations on virtual reality, in a lab environment, I am always reminded of how small changes in the details of a digital design can have profound unforeseen effects on the experiences of the humans who are playing with it.",
+                    "The slightest change in something as seemingly trivial as the ease of use of a button can sometimes completely alter behavior patterns.",
+                    "For instance, Stanford University researcher Jeremy Bailenson has demonstrated that changing the height of one's avatar in immersive virtual reality transforms self-esteem and social self-perception.",
+                    "Technologies are extensions of ourselves, and, like the avatars in Jeremy's lab, our identities can be shifted by the quirks of gadgets.",
+                    "It is impossible to work with information technology without also engaging in social engineering."
+                ]
             }
         ];
         
@@ -1859,11 +2073,18 @@
         let currentPuzzleIndex = 0;
         let gameStarted = false;
         let gameOverProgress = { correctPositions: 0, longestCorrectSequence: 0 };
+        let correctPositionsFeedback = new Set(); // Track positions confirmed as correct
         
         // Cheat code detection
         let cheatInput = '';
         const cheatCode = 'rowboat';
-        
+        let selectorUnlocked = false; // rowboat activates this
+
+        // Konami code detection
+        let konamiInput = [];
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let allPuzzlesUnlocked = false; // Konami code activates this
+
         // Click timing for double-click detection
         let clickTimers = {};
 
@@ -1886,29 +2107,73 @@
             }
         }
         
-        // Listen for cheat code
+        // Listen for cheat code and Konami code
         document.addEventListener('keydown', function(e) {
+            // First cheat code (rowboat) - shows puzzle selector
             if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
                 cheatInput += e.key.toLowerCase();
-                
+
                 if (cheatInput.length > cheatCode.length) {
                     cheatInput = cheatInput.slice(-cheatCode.length);
                 }
-                
+
                 if (cheatInput === cheatCode) {
-                    if (!cheatModeActive) {
-                        activateCheatMode();
+                    if (!selectorUnlocked) {
+                        // First time - unlock selector
+                        selectorUnlocked = true;
+                        showCheatMenu();
                     } else {
+                        // Already unlocked - just show menu
                         showCheatMenu();
                     }
                     cheatInput = '';
+                }
+            }
+
+            // Konami code (only works if selector is unlocked via rowboat)
+            if (selectorUnlocked) {
+                // Track arrow keys and b/a keys
+                if (e.key.startsWith('Arrow') || e.key === 'b' || e.key === 'a') {
+                    konamiInput.push(e.key);
+
+                    // Keep only the last 10 keys
+                    if (konamiInput.length > konamiCode.length) {
+                        konamiInput.shift();
+                    }
+
+                    // Check if sequence matches
+                    if (konamiInput.length === konamiCode.length) {
+                        let matches = true;
+                        for (let i = 0; i < konamiCode.length; i++) {
+                            if (konamiInput[i] !== konamiCode[i]) {
+                                matches = false;
+                                break;
+                            }
+                        }
+
+                        if (matches) {
+                            // Unlock all puzzles
+                            allPuzzlesUnlocked = true;
+                            cheatModeActive = true; // Also activate cheat mode so progress isn't saved
+                            showCheatMenu(); // Refresh the menu to show all unlocked
+                            konamiInput = [];
+
+                            // Visual feedback
+                            const puzzleNumber = document.getElementById('puzzleNumber');
+                            if (puzzleNumber) {
+                                puzzleNumber.style.color = '#10b981';
+                                puzzleNumber.style.fontWeight = 'bold';
+                                puzzleNumber.title = 'All Puzzles Unlocked';
+                            }
+                        }
+                    }
                 }
             }
         });
         
         // Get today's puzzle index based on date
         function getTodaysPuzzleIndex() {
-            const startDate = new Date('2025-10-24T00:00:01');
+            const startDate = new Date('2025-10-24T00:00:00');
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Normalize to midnight
             const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
@@ -1917,7 +2182,7 @@
 
         // Get puzzle date
         function getPuzzleDate(puzzleIndex) {
-            const startDate = new Date('2025-10-24T00:00:01');
+            const startDate = new Date('2025-10-24T00:00:00');
             const puzzleDate = new Date(startDate);
             puzzleDate.setDate(startDate.getDate() + puzzleIndex);
             return puzzleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -1925,6 +2190,9 @@
 
         // Check if puzzle is unlocked
         function isPuzzleUnlocked(puzzleIndex) {
+            if (allPuzzlesUnlocked) {
+                return true; // Konami code unlocks all puzzles
+            }
             const todayIndex = getTodaysPuzzleIndex();
             return puzzleIndex <= todayIndex;
         }
@@ -1967,7 +2235,8 @@
             isGameComplete = false;
             gameStarted = false;
             clickTimers = {};
-            
+            correctPositionsFeedback.clear(); // Reset correct position feedback
+
             // Set up correct order
             correctOrder = currentPuzzle.sentences.map((_, index) => index);
             
@@ -2075,20 +2344,36 @@
             const puzzleSelector = document.getElementById('puzzleSelector');
             puzzleSelector.innerHTML = '';
 
+            // Update menu title based on unlock status
+            const menuTitle = document.querySelector('.cheat-menu h3');
+            if (menuTitle) {
+                menuTitle.textContent = allPuzzlesUnlocked ? '🔓 All Puzzles Unlocked' : '🎮 Puzzle Selector';
+            }
+
             puzzles.forEach((puzzle, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'puzzle-btn';
                 const puzzleDate = getPuzzleDate(index);
                 const isUnlocked = isPuzzleUnlocked(index);
 
-                btn.textContent = puzzleDate;
+                // Create structured button content
+                const numberDiv = document.createElement('div');
+                numberDiv.className = 'puzzle-btn-number';
+                numberDiv.textContent = `#${index + 1} • ${puzzleDate}`;
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'puzzle-btn-title';
+                titleDiv.textContent = isUnlocked ? puzzle.title : '🔒 Locked';
+
+                btn.appendChild(numberDiv);
+                btn.appendChild(titleDiv);
+
                 btn.title = isUnlocked ? puzzle.title : '🔒 Locked - Available ' + puzzleDate;
 
                 if (!isUnlocked) {
                     btn.disabled = true;
                     btn.style.opacity = '0.5';
                     btn.style.cursor = 'not-allowed';
-                    btn.textContent += ' 🔒';
                 }
 
                 btn.onclick = () => {
@@ -2144,6 +2429,11 @@
                 card.dataset.originalIndex = sentenceIndex;
                 card.dataset.currentPosition = position;
 
+                // Apply correct class if this position has been confirmed as correct
+                if (correctPositionsFeedback.has(position)) {
+                    card.classList.add('correct');
+                }
+
                 const isFirst = position === 0;
                 const isLast = position === currentOrder.length - 1;
 
@@ -2151,25 +2441,40 @@
                     <div class="sentence-text">${currentPuzzle.sentences[sentenceIndex]}</div>
                     <div class="sentence-controls">
                         <button class="control-button up-btn" ${isFirst ? 'disabled' : ''}
-                                data-position="${position}" aria-label="Move up">↑</button>
+                                data-position="${position}" aria-label="Move up">
+                            <svg viewBox="0 0 24 24" width="32" height="32">
+                                <path d="M7 14l5-5 5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </button>
                         <button class="control-button down-btn" ${isLast ? 'disabled' : ''}
-                                data-position="${position}" aria-label="Move down">↓</button>
+                                data-position="${position}" aria-label="Move down">
+                            <svg viewBox="0 0 24 24" width="32" height="32">
+                                <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </button>
                     </div>
                 `;
 
-                // Add click event listeners to buttons
-                const upBtn = card.querySelector('.up-btn');
-                const downBtn = card.querySelector('.down-btn');
-
-                if (upBtn && !isFirst) {
-                    upBtn.addEventListener('click', () => handleMove(position, 'up'));
-                }
-
-                if (downBtn && !isLast) {
-                    downBtn.addEventListener('click', () => handleMove(position, 'down'));
-                }
-
                 sentenceList.appendChild(card);
+            });
+
+            // Add event listeners using event delegation on the parent container
+            // This ensures we always read the current position from the DOM
+            const allUpBtns = sentenceList.querySelectorAll('.up-btn:not([disabled])');
+            const allDownBtns = sentenceList.querySelectorAll('.down-btn:not([disabled])');
+
+            allUpBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const position = parseInt(this.dataset.position);
+                    handleMove(position, 'up');
+                });
+            });
+
+            allDownBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const position = parseInt(this.dataset.position);
+                    handleMove(position, 'down');
+                });
             });
         }
 
@@ -2193,10 +2498,13 @@
             // Perform single move for click events
             performSingleMove(position, direction);
 
-            // Reset moving flag after animation completes
-            setTimeout(() => {
-                isMoving = false;
-            }, 200); // Reduced from animation time for better responsiveness
+            // Reset moving flag immediately after DOM update completes
+            // This allows for rapid successive moves while preventing double-clicks
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    isMoving = false;
+                });
+            });
         }
         
         function performSingleMove(position, direction) {
@@ -2283,7 +2591,7 @@
         
         function updateAttemptsDisplay() {
             const remaining = maxAttempts - attemptCount;
-            document.getElementById('attemptsRemaining').textContent = `${remaining}/${maxAttempts}`;
+            document.getElementById('attemptsRemaining').textContent = remaining;
         }
         
         function submitGuess() {
@@ -2363,11 +2671,20 @@
         
         function highlightErrorPosition(position) {
             const cards = document.querySelectorAll('.sentence-card');
+
+            // Update the persistent set of correct positions
+            // All positions before the first error are correct
+            for (let i = 0; i < position - 1; i++) {
+                correctPositionsFeedback.add(i);
+            }
+
             cards.forEach((card, index) => {
-                card.classList.remove('error', 'correct');
+                card.classList.remove('error');
                 if (index + 1 === position) {
                     card.classList.add('error');
-                } else if (index + 1 < position) {
+                }
+                // Apply correct class based on persistent state
+                if (correctPositionsFeedback.has(index)) {
                     card.classList.add('correct');
                 }
             });
@@ -2741,12 +3058,38 @@
         
         function closeVictoryModal() {
             document.getElementById('victoryModal').classList.remove('active');
-            
+
             if (!cheatModeActive) {
                 showCompletedMessage();
             }
         }
-        
+
+        function showFullPassage() {
+            if (!currentPuzzle) return;
+
+            // Set title and attribution
+            document.getElementById('passageTitle').textContent = currentPuzzle.title;
+            document.getElementById('passageAttribution').textContent = currentPuzzle.attribution;
+
+            // Build the passage text with properly ordered sentences
+            const passageTextDiv = document.getElementById('passageText');
+            passageTextDiv.innerHTML = '';
+
+            currentPuzzle.sentences.forEach((sentence, index) => {
+                const sentenceP = document.createElement('p');
+                sentenceP.className = 'passage-sentence';
+                sentenceP.textContent = sentence;
+                passageTextDiv.appendChild(sentenceP);
+            });
+
+            // Show the modal
+            document.getElementById('passageModal').classList.add('active');
+        }
+
+        function closePassageModal() {
+            document.getElementById('passageModal').classList.remove('active');
+        }
+
         // Add all event listeners after DOM is loaded
         function addEventListeners() {
             // Submit button
