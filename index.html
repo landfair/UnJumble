@@ -2447,8 +2447,16 @@
                 card.dataset.originalIndex = sentenceIndex;
                 card.dataset.currentPosition = position;
 
-                // Check if this position is locked (confirmed as correct)
-                const isLocked = correctPositionsFeedback.has(position);
+                // Check if this position is locked AND actually correct
+                // Double-check to ensure we only lock truly correct positions
+                const isActuallyCorrect = currentOrder[position] === correctOrder[position];
+                const isMarkedAsLocked = correctPositionsFeedback.has(position);
+                const isLocked = isMarkedAsLocked && isActuallyCorrect;
+
+                // If marked as locked but not actually correct, remove from feedback set
+                if (isMarkedAsLocked && !isActuallyCorrect) {
+                    correctPositionsFeedback.delete(position);
+                }
 
                 // Apply correct class if this position has been confirmed as correct
                 if (isLocked) {
@@ -2722,9 +2730,16 @@
             const cards = document.querySelectorAll('.sentence-card');
 
             // Update the persistent set of correct positions
-            // All positions before the first error are correct
+            // IMPORTANT: Only add positions that are ACTUALLY correct
+            // Not just positions before the first error
             for (let i = 0; i < position - 1; i++) {
-                correctPositionsFeedback.add(i);
+                // Verify this position actually has the correct sentence before locking it
+                if (currentOrder[i] === correctOrder[i]) {
+                    correctPositionsFeedback.add(i);
+                } else {
+                    // If a previously locked position is now wrong, remove it
+                    correctPositionsFeedback.delete(i);
+                }
             }
 
             cards.forEach((card, index) => {
