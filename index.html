@@ -1503,7 +1503,129 @@
                 height: 180px;
             }
         }
+        /* ── Leaderboard ──────────────────────────────────── */
+        .leaderboard-section {
+            margin-top: 24px;
+            border-top: 1px solid #ede9fe;
+            padding-top: 20px;
+        }
+        .leaderboard-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #6d28d9;
+            margin-bottom: 14px;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .nickname-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .nickname-form p {
+            font-size: 0.85rem;
+            color: #6b7280;
+            text-align: center;
+        }
+        .nickname-input {
+            width: 100%;
+            max-width: 260px;
+            padding: 10px 14px;
+            border: 2px solid #c4b5fd;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        .nickname-input:focus {
+            border-color: #7c3aed;
+        }
+        .nickname-submit-btn {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-family: inherit;
+        }
+        .nickname-submit-btn:hover { opacity: 0.9; }
+        .nickname-skip-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            font-family: inherit;
+        }
+        .leaderboard-error {
+            display: none;
+            color: #dc2626;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        /* Spinner */
+        .leaderboard-spinner {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .spinner-ring {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #ede9fe;
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: lb-spin 0.8s linear infinite;
+        }
+        @keyframes lb-spin { to { transform: rotate(360deg); } }
+        /* Leaderboard panel */
+        .leaderboard-panel { display: none; }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .leaderboard-table thead tr {
+            background: #7c3aed;
+            color: white;
+        }
+        .leaderboard-table th {
+            padding: 7px 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .leaderboard-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f3f0ff;
+        }
+        .leaderboard-table tbody tr:nth-child(even) {
+            background: #faf5ff;
+        }
+        .leaderboard-table tbody tr.my-score {
+            background: #ede9fe;
+            font-weight: 600;
+            color: #5b21b6;
+        }
+        .leaderboard-empty {
+            text-align: center;
+            color: #9ca3af;
+            padding: 16px 0;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 480px) {
+            .leaderboard-table { font-size: 0.76rem; }
+            .leaderboard-table th, .leaderboard-table td { padding: 6px 7px; }
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="particles" id="particles"></div>
@@ -1523,7 +1645,7 @@
             <div class="stats-bar">
                 <div class="stat-item">
                     <div class="stat-label">Date</div>
-                    <div class="stat-value" id="puzzleNumber">Oct 24, 2025</div>
+                    <div class="stat-value" id="puzzleNumber">Jun 9, 2026</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Attempts Remaining</div>
@@ -1648,6 +1770,37 @@
             <div class="victory-emoji">🎉</div>
             <h2 class="victory-title">Amazing!</h2>
             <p>You solved today's puzzle!</p>
+            <!-- Leaderboard section -->
+            <div class="leaderboard-section">
+                <h3>🏆 Today's Leaderboard</h3>
+                <!-- Step 1: Nickname form -->
+                <div id="lbNicknameForm" class="nickname-form">
+                    <p>Add your score to the daily top-10!</p>
+                    <input id="nicknameInput" class="nickname-input" type="text" maxlength="20" placeholder="Your nickname" autocomplete="off" />
+                    <div id="lbError" class="leaderboard-error"></div>
+                    <button class="nickname-submit-btn" onclick="handleNicknameSubmit()">Submit Score</button>
+                    <button class="nickname-skip-btn" onclick="handleSkipLeaderboard()">Skip — just show leaderboard</button>
+                </div>
+                <!-- Step 2: Spinner -->
+                <div id="lbSpinner" class="leaderboard-spinner">
+                    <div class="spinner-ring"></div>
+                </div>
+                <!-- Step 3: Leaderboard panel -->
+                <div id="lbPanel" class="leaderboard-panel">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nickname</th>
+                                <th>Time</th>
+                                <th>Attempts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lbTableBody"></tbody>
+                    </table>
+                    <p id="lbEmpty" class="leaderboard-empty" style="display:none;">No scores yet today — be the first!</p>
+                </div>
+            </div>
             
             <div class="victory-stats">
                 <div class="victory-time" id="finalTime">2:34</div>
@@ -2092,7 +2245,152 @@
         let gameStarted = false;
         let gameOverProgress = { correctPositions: 0, longestCorrectSequence: 0 };
         let correctPositionsFeedback = new Set(); // Track positions confirmed as correct
-        
+
+        // ── Supabase leaderboard ─────────────────────────────
+        const SUPABASE_URL  = 'https://nbqbmyrtfucnnkhyavia.supabase.co';
+        const SUPABASE_ANON = 'sb_publishable_TMYH88H6oB3bf588yPv6Ng_wnO_Wi3C';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        let leaderboardNickname = null;
+
+        function getTodayDateString() {
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm   = String(d.getMonth() + 1).padStart(2, '0');
+            const dd   = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function parseTimeToSeconds(mmss) {
+            const parts = mmss.split(':');
+            if (parts.length !== 2) return 0;
+            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        }
+
+        function formatSecondsToTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = secs % 60;
+            return `${m}:${String(s).padStart(2, '0')}`;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function validateNickname(raw) {
+            const trimmed = raw.trim();
+            if (!trimmed) return { ok: false, error: 'Please enter a nickname.' };
+            if (trimmed.length > 20) return { ok: false, error: 'Nickname must be 20 characters or fewer.' };
+            if (!/^[\w\s\-'.!?]+$/u.test(trimmed)) return { ok: false, error: 'Nickname contains invalid characters.' };
+            return { ok: true, value: trimmed };
+        }
+
+        function showLeaderboardStep(step) {
+            document.getElementById('lbNicknameForm').style.display = step === 'form'    ? '' : 'none';
+            document.getElementById('lbSpinner').style.display      = step === 'spinner' ? 'flex' : 'none';
+            document.getElementById('lbPanel').style.display        = step === 'panel'   ? '' : 'none';
+        }
+
+        function showLeaderboardError(message) {
+            const el = document.getElementById('lbError');
+            el.textContent = message || '';
+            el.style.display = message ? '' : 'none';
+        }
+
+        async function submitScore(nickname, timeSecs, attempts) {
+            const { error } = await supabaseClient
+                .from('scores')
+                .upsert(
+                    { nickname, puzzle_date: getTodayDateString(), time_seconds: timeSecs, attempts },
+                    { onConflict: 'nickname,puzzle_date' }
+                );
+            if (error) throw error;
+        }
+
+        async function fetchLeaderboard() {
+            const { data, error } = await supabaseClient
+                .from('scores')
+                .select('nickname, time_seconds, attempts')
+                .eq('puzzle_date', getTodayDateString())
+                .order('attempts', { ascending: true })
+                .order('time_seconds', { ascending: true })
+                .limit(10);
+            if (error) throw error;
+            return data || [];
+        }
+
+        function renderLeaderboard(rows) {
+            const tbody  = document.getElementById('lbTableBody');
+            const empty  = document.getElementById('lbEmpty');
+            tbody.innerHTML = '';
+            if (!rows.length) {
+                empty.style.display = '';
+                return;
+            }
+            empty.style.display = 'none';
+            const medals = ['🥇', '🥈', '🥉'];
+            rows.forEach((row, i) => {
+                const rank    = medals[i] || (i + 1);
+                const isMe    = leaderboardNickname && row.nickname === leaderboardNickname;
+                const tr      = document.createElement('tr');
+                if (isMe) tr.classList.add('my-score');
+                tr.innerHTML = `
+                    <td>${rank}</td>
+                    <td>${escapeHtml(row.nickname)}</td>
+                    <td>${escapeHtml(formatSecondsToTime(row.time_seconds))}</td>
+                    <td>${escapeHtml(String(row.attempts))}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function handleNicknameSubmit() {
+            showLeaderboardError('');
+            const raw = document.getElementById('nicknameInput').value;
+            const validation = validateNickname(raw);
+            if (!validation.ok) {
+                showLeaderboardError(validation.error);
+                return;
+            }
+            const nickname = validation.value;
+            const timeStr  = document.getElementById('timer').textContent;
+            const timeSecs = parseTimeToSeconds(timeStr);
+            const attempts = attemptCount;
+
+            leaderboardNickname = nickname;
+            localStorage.setItem('unjumbleNickname', nickname);
+            showLeaderboardStep('spinner');
+
+            try {
+                await submitScore(nickname, timeSecs, attempts);
+                const rows = await fetchLeaderboard();
+                renderLeaderboard(rows);
+                showLeaderboardStep('panel');
+            } catch (err) {
+                console.error('Leaderboard error:', err);
+                renderLeaderboard([]);
+                showLeaderboardStep('panel');
+            }
+        }
+
+        async function handleSkipLeaderboard() {
+            leaderboardNickname = null;
+            showLeaderboardStep('spinner');
+            try {
+                const rows = await fetchLeaderboard();
+                renderLeaderboard(rows);
+            } catch (err) {
+                console.error('Leaderboard fetch error:', err);
+                renderLeaderboard([]);
+            }
+            showLeaderboardStep('panel');
+        }
+        // ── End Supabase leaderboard ──────────────────────────
+
         // Cheat code detection
         let cheatInput = '';
         const cheatCode = 'rowboat';
@@ -2191,19 +2489,17 @@
         
         // Get today's puzzle index based on date
         function getTodaysPuzzleIndex() {
-            const startDate = new Date('2025-10-24T00:00:00');
+            const startDate = new Date('2026-06-09T00:00:00');
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Normalize to midnight
             const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-            return Math.max(0, Math.min(daysDiff, puzzles.length - 1));
+            return Math.max(0, daysDiff % puzzles.length);
         }
 
-        // Get puzzle date
+        // Get puzzle date — always shows the actual calendar date
         function getPuzzleDate(puzzleIndex) {
-            const startDate = new Date('2025-10-24T00:00:00');
-            const puzzleDate = new Date(startDate);
-            puzzleDate.setDate(startDate.getDate() + puzzleIndex);
-            return puzzleDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const today = new Date();
+            return today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
         // Check if puzzle is unlocked
@@ -2934,11 +3230,27 @@
         function showVictoryModal() {
             const finalTime = document.getElementById('timer').textContent;
             const attemptsUsed = attemptCount;
-            
+
             document.getElementById('finalTime').textContent = finalTime;
             document.getElementById('finalAttempts').textContent = `Solved in ${attemptsUsed} attempt${attemptsUsed === 1 ? '' : 's'}`;
+
+            // Reset leaderboard UI
+            showLeaderboardError('');
+            document.getElementById('lbTableBody').innerHTML = '';
+            document.getElementById('lbEmpty').style.display = 'none';
+
+            if (cheatModeActive) {
+                // Cheat mode: read-only leaderboard, no submission
+                showLeaderboardStep('spinner');
+                handleSkipLeaderboard();
+            } else {
+                // Pre-fill saved nickname
+                const saved = localStorage.getItem('unjumbleNickname') || '';
+                document.getElementById('nicknameInput').value = saved;
+                showLeaderboardStep('form');
+            }
+
             document.getElementById('victoryModal').classList.add('active');
-            
             saveGameStats(finalTime, attemptsUsed);
         }
         
@@ -3229,6 +3541,14 @@
             const gameOverCloseBtn = document.getElementById('gameOverCloseBtn');
             if (gameOverCloseBtn) {
                 gameOverCloseBtn.addEventListener('click', closeGameOverModal);
+            }
+
+            // Leaderboard nickname — submit on Enter
+            const nicknameInput = document.getElementById('nicknameInput');
+            if (nicknameInput) {
+                nicknameInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') handleNicknameSubmit();
+                });
             }
         }
         
