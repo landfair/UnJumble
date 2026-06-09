@@ -2733,6 +2733,18 @@
                             </div>
                         `;
                     }
+                    // Re-attach delegated arrow listener after innerHTML rebuild
+                    const sl = document.getElementById('sentenceList');
+                    if (sl && !sl._arrowListenerAttached) {
+                        sl._arrowListenerAttached = true;
+                        sl.addEventListener('click', function(e) {
+                            const btn = e.target.closest('.up-btn, .down-btn');
+                            if (!btn || btn.disabled) return;
+                            const position = parseInt(btn.dataset.position);
+                            const direction = btn.classList.contains('up-btn') ? 'up' : 'down';
+                            handleMove(position, direction);
+                        });
+                    }
                     initGame(index);
                     if (!gameStarted && !isGameComplete) {
                         gameStarted = true;
@@ -2803,25 +2815,6 @@
                 `;
 
                 sentenceList.appendChild(card);
-            });
-
-            // Add event listeners using event delegation on the parent container
-            // This ensures we always read the current position from the DOM
-            const allUpBtns = sentenceList.querySelectorAll('.up-btn:not([disabled])');
-            const allDownBtns = sentenceList.querySelectorAll('.down-btn:not([disabled])');
-
-            allUpBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const position = parseInt(this.dataset.position);
-                    handleMove(position, 'up');
-                });
-            });
-
-            allDownBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const position = parseInt(this.dataset.position);
-                    handleMove(position, 'down');
-                });
             });
         }
 
@@ -3559,6 +3552,19 @@
             const gameOverCloseBtn = document.getElementById('gameOverCloseBtn');
             if (gameOverCloseBtn) {
                 gameOverCloseBtn.addEventListener('click', closeGameOverModal);
+            }
+
+            // Arrow buttons — single delegated listener so it survives card re-renders
+            const sentenceList = document.getElementById('sentenceList');
+            if (sentenceList && !sentenceList._arrowListenerAttached) {
+                sentenceList._arrowListenerAttached = true;
+                sentenceList.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.up-btn, .down-btn');
+                    if (!btn || btn.disabled) return;
+                    const position = parseInt(btn.dataset.position);
+                    const direction = btn.classList.contains('up-btn') ? 'up' : 'down';
+                    handleMove(position, direction);
+                });
             }
 
             // Leaderboard nickname — submit on Enter
