@@ -300,20 +300,7 @@
         
         .game-area {
             padding: 40px;
-        }
-        
-        .puzzle-container {
-            background: linear-gradient(to bottom, #ffffff, #fdfcff);
-            border: 2px solid rgba(87, 6, 140, 0.08);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 32px;
             min-height: 400px;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow:
-                0 4px 16px rgba(87, 6, 140, 0.04),
-                0 2px 8px rgba(87, 6, 140, 0.06);
         }
         
         .puzzle-title {
@@ -1225,10 +1212,6 @@
                 padding: 28px 20px;
             }
 
-            .puzzle-container {
-                padding: 24px;
-            }
-
             .puzzle-title {
                 font-size: 1.25rem;
             }
@@ -1391,10 +1374,6 @@
 
             .game-area {
                 padding: 20px 16px;
-            }
-
-            .puzzle-container {
-                padding: 20px;
             }
 
             .sentence-card {
@@ -1658,7 +1637,7 @@
             </div>
             
             <div class="game-area" id="gameArea">
-                <div class="puzzle-container" id="puzzleContainer">
+                <div id="puzzleContainer">
                     <div class="puzzle-title" id="puzzleTitle">Arrange the Sentences</div>
                     <div class="sentence-list" id="sentenceList">
                         <!-- Sentence cards will be generated here -->
@@ -1770,6 +1749,13 @@
             <div class="victory-emoji">🎉</div>
             <h2 class="victory-title">Amazing!</h2>
             <p>You solved today's puzzle!</p>
+
+            <div class="victory-stats">
+                <div class="victory-time" id="finalTime">2:34</div>
+                <div class="victory-attempts" id="finalAttempts">Solved in 2 attempts</div>
+                <p style="margin-top: 12px; color: #6b7280;">Share your results with friends!</p>
+            </div>
+
             <!-- Leaderboard section -->
             <div class="leaderboard-section">
                 <h3>🏆 Today's Leaderboard</h3>
@@ -1801,13 +1787,7 @@
                     <p id="lbEmpty" class="leaderboard-empty" style="display:none;">No scores yet today — be the first!</p>
                 </div>
             </div>
-            
-            <div class="victory-stats">
-                <div class="victory-time" id="finalTime">2:34</div>
-                <div class="victory-attempts" id="finalAttempts">Solved in 2 attempts</div>
-                <p style="margin-top: 12px; color: #6b7280;">Share your results with friends!</p>
-            </div>
-            
+
             <div class="share-buttons">
                 <button class="share-btn twitter-btn" onclick="shareToTwitter()">
                     🐦 Tweet
@@ -2614,8 +2594,46 @@
                         Next puzzle in: <span id="countdown"></span>
                     </div>
                 </div>
+                <div class="leaderboard-section" style="background:white; border-radius:16px; padding:20px; margin-top:16px;">
+                    <h3>🏆 Today's Leaderboard</h3>
+                    <div id="lbSpinnerStatic" class="leaderboard-spinner" style="display:flex;">
+                        <div class="spinner-ring"></div>
+                    </div>
+                    <div id="lbPanelStatic" style="display:none;">
+                        <table class="leaderboard-table">
+                            <thead>
+                                <tr><th>#</th><th>Nickname</th><th>Time</th><th>Attempts</th></tr>
+                            </thead>
+                            <tbody id="lbTableBodyStatic"></tbody>
+                        </table>
+                        <p id="lbEmptyStatic" class="leaderboard-empty" style="display:none;">No scores yet today — be the first!</p>
+                    </div>
+                </div>
             `;
             startCountdown();
+            fetchLeaderboard().then(rows => {
+                const saved = localStorage.getItem('unjumbleNickname');
+                const medals = ['🥇', '🥈', '🥉'];
+                const tbody = document.getElementById('lbTableBodyStatic');
+                const empty = document.getElementById('lbEmptyStatic');
+                if (!tbody) return;
+                if (!rows.length) {
+                    empty.style.display = '';
+                } else {
+                    rows.forEach((row, i) => {
+                        const isMe = saved && row.nickname === saved;
+                        const tr = document.createElement('tr');
+                        if (isMe) tr.classList.add('my-score');
+                        tr.innerHTML = `<td>${medals[i] || (i+1)}</td><td>${escapeHtml(row.nickname)}</td><td>${escapeHtml(formatSecondsToTime(row.time_seconds))}</td><td>${escapeHtml(String(row.attempts))}</td>`;
+                        tbody.appendChild(tr);
+                    });
+                }
+                document.getElementById('lbSpinnerStatic').style.display = 'none';
+                document.getElementById('lbPanelStatic').style.display = '';
+            }).catch(() => {
+                document.getElementById('lbSpinnerStatic').style.display = 'none';
+                document.getElementById('lbPanelStatic').style.display = '';
+            });
         }
         
         function startCountdown() {
@@ -2697,7 +2715,7 @@
                     const gameArea = document.getElementById('gameArea');
                     if (!gameArea.querySelector('#puzzleContainer')) {
                         gameArea.innerHTML = `
-                            <div class="puzzle-container" id="puzzleContainer">
+                            <div id="puzzleContainer">
                                 <div class="puzzle-title" id="puzzleTitle">Arrange the Sentences</div>
                                 <div class="sentence-list" id="sentenceList">
                                     <!-- Sentence cards will be generated here -->
