@@ -1754,6 +1754,24 @@
                 <p style="margin-top: 12px; color: #6b7280;">Share your results with friends!</p>
             </div>
 
+            <div class="share-buttons">
+                <button class="share-btn twitter-btn" onclick="shareToTwitter()">
+                    🐦 Tweet
+                </button>
+                <button class="share-btn text-btn" onclick="shareViaSMS()">
+                    📱 Text
+                </button>
+                <button class="share-btn email-btn" onclick="shareViaEmail()">
+                    ✉️ Email
+                </button>
+                <button class="share-btn copy-btn" onclick="copyToClipboard()">
+                    📋 Copy
+                </button>
+            </div>
+
+            <button class="view-passage-btn" onclick="showFullPassage()">📖 View Full Passage</button>
+            <button class="close-btn" onclick="closeVictoryModal()">Continue</button>
+
             <!-- Leaderboard section -->
             <div class="leaderboard-section">
                 <h3>🏆 Today's Leaderboard</h3>
@@ -1785,24 +1803,6 @@
                     <p id="lbEmpty" class="leaderboard-empty" style="display:none;">No scores yet today — be the first!</p>
                 </div>
             </div>
-
-            <div class="share-buttons">
-                <button class="share-btn twitter-btn" onclick="shareToTwitter()">
-                    🐦 Tweet
-                </button>
-                <button class="share-btn text-btn" onclick="shareViaSMS()">
-                    📱 Text
-                </button>
-                <button class="share-btn email-btn" onclick="shareViaEmail()">
-                    ✉️ Email
-                </button>
-                <button class="share-btn copy-btn" onclick="copyToClipboard()">
-                    📋 Copy
-                </button>
-            </div>
-
-            <button class="view-passage-btn" onclick="showFullPassage()">📖 View Full Passage</button>
-            <button class="close-btn" onclick="closeVictoryModal()">Continue</button>
         </div>
     </div>
 
