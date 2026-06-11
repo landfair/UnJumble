@@ -69,7 +69,7 @@
 
         body.ios .nyu-logo {
             width: 200px;
-            height: 200px;
+            height: auto;
         }
 
         body.ios .header-text {
@@ -84,7 +84,7 @@
         @media (max-width: 480px) {
             body.ios .nyu-logo {
                 width: 160px;
-                height: 160px;
+                height: auto;
             }
             
             body.ios .logo {
@@ -191,15 +191,13 @@
         }
         
         .nyu-logo {
-            width: 400px;
-            height: 400px;
-            object-fit: contain;
+            width: 240px;
+            height: auto;
         }
 
         .nyu-logo-small {
-            width: 240px;
-            height: 240px;
-            object-fit: contain;
+            width: 180px;
+            height: auto;
         }
         
         .header::before {
@@ -1349,8 +1347,8 @@
             }
 
             .nyu-logo {
-                width: 280px;
-                height: 280px;
+                width: 200px;
+                height: auto;
             }
         }
 
@@ -1420,8 +1418,8 @@
             }
 
             .nyu-logo {
-                width: 220px;
-                height: 220px;
+                width: 180px;
+                height: auto;
             }
 
             .stat-value {
@@ -1478,8 +1476,8 @@
             }
 
             .nyu-logo {
-                width: 180px;
-                height: 180px;
+                width: 160px;
+                height: auto;
             }
         }
         /* ── Leaderboard ──────────────────────────────────── */
@@ -2593,6 +2591,12 @@
                     <div class="next-puzzle-timer">
                         Next puzzle in: <span id="countdown"></span>
                     </div>
+                    <div class="share-buttons" style="margin-top:20px;">
+                        <button class="share-btn twitter-btn" onclick="shareToTwitter()">🐦 Tweet</button>
+                        <button class="share-btn text-btn" onclick="shareViaSMS()">📱 Text</button>
+                        <button class="share-btn email-btn" onclick="shareViaEmail()">✉️ Email</button>
+                        <button class="share-btn copy-btn" onclick="copyToClipboard()">📋 Copy</button>
+                    </div>
                 </div>
                 <div class="leaderboard-section" style="background:white; border-radius:16px; padding:20px; margin-top:16px;">
                     <h3>🏆 Today's Leaderboard</h3>
@@ -3349,6 +3353,23 @@
             resumeTimer();
         });
         
+        function getShareTextFromStats() {
+            const today = new Date().toDateString();
+            const stats = JSON.parse(localStorage.getItem('unjumbleStats') || '{}');
+            const entry = stats[today];
+            if (!entry) return getShareText();
+            const attempts = entry.attempts;
+            const time = entry.time;
+            const puzzleNum = (entry.puzzleIndex ?? currentPuzzleIndex) + 1;
+            const maxAttempts = 5;
+            const attemptSquares = Array(maxAttempts).fill('⬜').map((_, i) => {
+                if (i < attempts - 1) return '🟥';
+                if (i === attempts - 1) return '🟩';
+                return '⬜';
+            }).join('');
+            return `UnJumble #${puzzleNum}\n${attemptSquares}\nTime: ${time}\n\nCan you solve today's puzzle? Play at: https://landfair.github.io/UnJumble/`;
+        }
+
         function getShareText() {
             const time = document.getElementById('finalTime').textContent;
             const attempts = attemptCount;
@@ -3364,7 +3385,7 @@
         }
         
         function shareToTwitter() {
-            const text = getShareText();
+            const text = getShareTextFromStats();
             
             // Try native sharing first on iOS
             if (detectiOS() && navigator.share) {
@@ -3384,7 +3405,7 @@
         }
         
         function shareViaSMS() {
-            const text = getShareText();
+            const text = getShareTextFromStats();
             
             // iOS native sharing
             if (detectiOS() && navigator.share) {
@@ -3404,7 +3425,7 @@
         
         function shareViaEmail() {
             const subject = encodeURIComponent('Check out my UnJumble results!');
-            const body = encodeURIComponent(getShareText());
+            const body = encodeURIComponent(getShareTextFromStats());
             const url = `mailto:?subject=${subject}&body=${body}`;
             
             // iOS handles mailto links well
@@ -3416,7 +3437,7 @@
         }
         
         function copyToClipboard() {
-            const text = getShareText();
+            const text = getShareTextFromStats();
             navigator.clipboard.writeText(text).then(() => {
                 const btn = event.target;
                 const originalText = btn.innerHTML;
