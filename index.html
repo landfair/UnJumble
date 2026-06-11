@@ -2847,13 +2847,7 @@
             // Perform single move for click events
             performSingleMove(position, direction);
 
-            // Reset moving flag immediately after DOM update completes
-            // This allows for rapid successive moves while preventing double-clicks
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    isMoving = false;
-                });
-            });
+            // isMoving is cleared inside animateAndRecreate after DOM rebuild
         }
         
         function performSingleMove(position, direction) {
@@ -2915,38 +2909,25 @@
         }
         
         function animateAndRecreate(movedToPosition) {
-            // Use requestAnimationFrame for smoother rendering on mobile
             requestAnimationFrame(() => {
                 // Recreate cards
                 createSentenceCards();
 
-                // Animate the moved card using RAF for optimal performance
+                // DOM is rebuilt — safe to accept next move
+                isMoving = false;
+
                 requestAnimationFrame(() => {
                     const cards = document.querySelectorAll('.sentence-card');
                     if (cards[movedToPosition]) {
-                        // Add animation class
                         cards[movedToPosition].classList.add('recently-moved');
 
-                        // Scroll into view with optimized settings for mobile
-                        const scrollOptions = {
-                            behavior: 'smooth',
-                            block: 'nearest',
-                            inline: 'nearest'
-                        };
-
-                        // Use intersection observer for better mobile scrolling performance
-                        if ('IntersectionObserver' in window) {
-                            const rect = cards[movedToPosition].getBoundingClientRect();
-                            const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-
-                            if (!isVisible) {
-                                cards[movedToPosition].scrollIntoView(scrollOptions);
-                            }
-                        } else {
-                            cards[movedToPosition].scrollIntoView(scrollOptions);
+                        // Only scroll if the card is genuinely out of the visible area
+                        const rect = cards[movedToPosition].getBoundingClientRect();
+                        const viewportHeight = document.documentElement.clientHeight;
+                        if (rect.top < 0 || rect.bottom > viewportHeight) {
+                            cards[movedToPosition].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                         }
 
-                        // Remove animation class after animation completes
                         setTimeout(() => {
                             if (cards[movedToPosition]) {
                                 cards[movedToPosition].classList.remove('recently-moved');
